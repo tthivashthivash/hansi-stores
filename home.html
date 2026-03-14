@@ -243,6 +243,22 @@ card.style.display="none";
 });
 
 }
+  // ===== SEARCH FUNCTION =====
+const searchInput = document.querySelector(".search-bar");
+
+searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase();
+    const cards = document.querySelectorAll(".product-card");
+
+    cards.forEach(card => {
+        const name = card.querySelector("h3").innerText.toLowerCase();
+        if(name.includes(query)){
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+});
 
 </script>
 
