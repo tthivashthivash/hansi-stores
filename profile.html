@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +13,7 @@ main{padding:20px;}
 .profile-card{max-width:400px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 .profile-card h2{margin-bottom:20px;color:#333;}
 .profile-card p{margin-bottom:10px;color:#555;font-size:16px;}
-button.logout, button.settings, button.contact{
+button.logout, button.settings, button.contact, button.edit{
     padding:10px 15px;
     border:none;
     border-radius:20px;
@@ -24,9 +23,10 @@ button.logout, button.settings, button.contact{
     transition:0.3s;
     margin-right:10px;
 }
-button.logout:hover, button.settings:hover, button.contact:hover{opacity:0.8;}
+button.logout:hover, button.settings:hover, button.contact:hover, button.edit:hover{opacity:0.8;}
 button.settings{background:skyblue;}
 button.contact{background:orange;}
+button.edit{background:green;}
 </style>
 </head>
 <body>
@@ -48,6 +48,7 @@ button.contact{background:orange;}
         <p><strong>Mobile:</strong> <span id="userMobile"></span></p>
         <p><strong>Address:</strong> <span id="userAddress"></span></p>
 
+        <button class="edit" onclick="editProfile()">Edit Profile</button>
         <button class="settings" onclick="redirect('settings.html')">Settings</button>
         <button class="contact" onclick="redirect('contact.html')">Contact Support</button>
         <button class="logout" onclick="confirmLogout()">Logout</button>
@@ -64,7 +65,8 @@ if(!loggedInUser){
     alert("Please login first."); 
     redirect("index.html"); 
 } else { 
-    document.getElementById("userName").innerText = loggedInUser.name || "N/A";
+    // Fix: username → name
+    document.getElementById("userName").innerText = loggedInUser.username || "N/A";
     document.getElementById("userEmail").innerText = loggedInUser.email || "N/A";
     document.getElementById("userMobile").innerText = loggedInUser.mobile || "N/A";
     document.getElementById("userAddress").innerText = loggedInUser.address || "N/A";
@@ -76,6 +78,49 @@ function confirmLogout(){
         localStorage.removeItem("loggedInUser");
         alert("Logged out successfully!");
         redirect("index.html");
+    }
+}
+
+// ===== Edit Profile =====
+function editProfile(){
+    const newName = prompt("Enter your Name:", loggedInUser.username);
+    const newEmail = prompt("Enter your Email:", loggedInUser.email);
+    const newMobile = prompt("Enter your Mobile Number:", loggedInUser.mobile);
+    const newAddress = prompt("Enter your Address:", loggedInUser.address || "");
+
+    if(newName && newEmail && newMobile){
+        // Validate Mobile & Email
+        if(!/^[0-9]{10}$/.test(newMobile)){
+            alert("Enter valid 10-digit mobile number!");
+            return;
+        }
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)){
+            alert("Enter valid email!");
+            return;
+        }
+
+        // Update localStorage
+        loggedInUser.username = newName;
+        loggedInUser.email = newEmail;
+        loggedInUser.mobile = newMobile;
+        loggedInUser.address = newAddress;
+
+        // Update loggedInUser
+        localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+
+        // Also update in users array
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+        const idx = users.findIndex(u=>u.username===loggedInUser.username);
+        if(idx!==-1){
+            users[idx] = loggedInUser;
+            localStorage.setItem("users", JSON.stringify(users));
+        }
+
+        // Refresh page
+        alert("Profile updated successfully!");
+        window.location.reload();
+    }else{
+        alert("All fields are required!");
     }
 }
 </script>
