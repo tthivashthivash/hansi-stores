@@ -3,100 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hansi Store - Checkout</title>
+<title>Checkout</title>
 <style>
-body {margin:0; font-family:'Poppins',sans-serif; background:#f8f8f8;}
-header.navbar {display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:linear-gradient(135deg,violet,skyblue); color:white;}
-header .logo {font-size:24px; font-weight:bold; cursor:pointer;}
-header .nav-icons span {margin-left:20px; cursor:pointer;}
-main {padding:20px; max-width:600px; margin:auto; background:white; border-radius:15px; box-shadow:0 3px 10px rgba(0,0,0,0.1);}
-h2 {margin-top:0;}
-.product-summary {display:flex; align-items:center; gap:20px; margin-bottom:20px;}
-.product-summary img {width:150px; border-radius:10px;}
-.product-summary div {flex:1;}
-input[type=number] {width:60px; padding:5px; margin-top:5px;}
-button {padding:10px 15px; border:none; border-radius:5px; background:violet; color:white; cursor:pointer; transition:0.3s;}
-button:hover {opacity:0.8;}
+body{margin:0;font-family:'Poppins',sans-serif;background:#f8f8f8;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+header .logo{font-size:26px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
+main{padding:20px;max-width:600px;margin:auto;}
+.checkout-item{display:flex;justify-content:space-between;padding:15px;background:white;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.total{margin-top:20px;font-size:20px;text-align:right;font-weight:bold;}
+.pay-btn{margin-top:15px;padding:10px 20px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;float:right;}
+.pay-btn:hover{opacity:0.8;}
 </style>
 </head>
 <body>
 
 <header class="navbar">
-  <div class="logo" onclick="redirect('home.html')">Hansi Store</div>
-  <div class="nav-icons">
-    <span onclick="redirect('cart.html')">🛒 Cart</span>
-    <span onclick="redirect('profile.html')">👤 Profile</span>
-  </div>
+    <div class="logo" onclick="redirect('home.html')">Hansi Store</div>
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('orders.html')">📦 My Orders</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
 </header>
 
 <main>
-  <h2>Checkout</h2>
-  <div id="checkoutContainer">
-    <!-- Product summary will load here -->
-  </div>
-  <button id="placeOrderBtn">Place Order</button>
+    <h2>Checkout</h2>
+    <div id="checkoutContainer"></div>
+    <div class="total" id="totalAmount"></div>
+    <button class="pay-btn" onclick="payNow()">Pay Now</button>
 </main>
 
 <script>
-// ===== Redirect =====
 function redirect(page){ window.location.href = page; }
 
-// ===== Products Data (same as product.html) =====
-const products = [
-  {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/300x300?text=A"},
-  {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/300x300?text=B"},
-  {id:3,name:"Product C",price:299,image:"https://via.placeholder.com/300x300?text=C"},
-  {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/300x300?text=D"}
-];
-
-// ===== Logged-in user =====
 const loggedInUser = localStorage.getItem("loggedInUser");
-if(!loggedInUser){ alert("Please login first."); redirect("index.html"); }
-
-// ===== Selected product =====
-const selectedId = parseInt(localStorage.getItem("checkoutProduct"));
-const product = products.find(p=>p.id===selectedId);
-const container = document.getElementById("checkoutContainer");
-
-if(!product){
-  container.innerHTML="<p>No product selected!</p>";
-}else{
-  container.innerHTML = `
-    <div class="product-summary">
-      <img src="${product.image}" alt="${product.name}">
-      <div>
-        <h3>${product.name}</h3>
-        <p>Price: ₹${product.price}</p>
-        <label>Quantity: <input type="number" id="quantity" value="1" min="1"></label>
-        <p id="totalPrice"><strong>Total: ₹${product.price}</strong></p>
-      </div>
-    </div>
-  `;
+if(!loggedInUser){ 
+    alert("Please login first."); 
+    redirect("index.html"); 
 }
 
-// ===== Quantity update =====
-const qtyInput = document.getElementById("quantity");
-qtyInput.addEventListener("input", ()=>{
-  const qty = parseInt(qtyInput.value) || 1;
-  document.getElementById("totalPrice").innerHTML = `<strong>Total: ₹${product.price*qty}</strong>`;
-});
+const products = [
+    {id:1,name:"Product A",price:499},
+    {id:2,name:"Product B",price:799},
+    {id:3,name:"Product C",price:299},
+    {id:4,name:"Product D",price:999}
+];
 
-// ===== Place Order =====
-document.getElementById("placeOrderBtn").addEventListener("click", ()=>{
-  const qty = parseInt(qtyInput.value) || 1;
-  let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-  orders.push({
-    username: loggedInUser,
-    productId: product.id,
-    productName: product.name,
-    price: product.price,
-    quantity: qty,
-    date: new Date().toLocaleString()
-  });
-  localStorage.setItem("orders", JSON.stringify(orders));
-  alert("Order placed successfully!");
-  redirect("orders.html"); // redirect to My Orders page
-});
+let checkoutCart = JSON.parse(localStorage.getItem("checkoutCart") || "[]");
+const container = document.getElementById("checkoutContainer");
+const totalDiv = document.getElementById("totalAmount");
+
+function loadCheckout(){
+    container.innerHTML = "";
+    let total = 0;
+    if(checkoutCart.length===0){
+        container.innerHTML = "<p>No items to checkout!</p>";
+        totalDiv.innerHTML = "";
+        return;
+    }
+    checkoutCart.forEach(item=>{
+        const product = products.find(p=>p.id===item.id);
+        const itemTotal = product.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.className = "checkout-item";
+        div.innerHTML = `
+            <span>${product.name} x ${item.quantity}</span>
+            <span>₹${itemTotal}</span>
+        `;
+        container.appendChild(div);
+    });
+    totalDiv.innerHTML = `Total Amount: ₹${total}`;
+}
+
+function payNow(){
+    alert("Payment Successful! Order placed.");
+    // Save order
+    let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    orders.push(...checkoutCart.map(item=>({ ...item, date:new Date().toLocaleString() })));
+    localStorage.setItem("orders", JSON.stringify(orders));
+    // Clear cart
+    localStorage.removeItem("cart");
+    localStorage.removeItem("checkoutCart");
+    redirect("orders.html");
+}
+
+loadCheckout();
 </script>
 
 </body>
