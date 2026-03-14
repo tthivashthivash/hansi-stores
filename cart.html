@@ -1,256 +1,132 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Cart</title>
-
+<title>Hansi Store Cart</title>
 <style>
-body{
-margin:0;
-font-family:Poppins,sans-serif;
-background:#f8f8f8;
-}
-
-header.navbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 30px;
-background:linear-gradient(135deg,violet,skyblue);
-color:white;
-}
-
-.logo{
-font-size:26px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.nav-icons span{
-margin-left:20px;
-cursor:pointer;
-font-weight:bold;
-}
-
-main{
-padding:20px;
-max-width:900px;
-margin:auto;
-}
-
-.cart-item{
-background:white;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 3px 6px rgba(0,0,0,0.1);
-}
-
-.cart-item button{
-padding:5px 10px;
-border:none;
-border-radius:5px;
-background:violet;
-color:white;
-cursor:pointer;
-margin-left:5px;
-}
-
-.total-box{
-text-align:center;
-margin-top:20px;
-font-size:20px;
-font-weight:bold;
-}
-
-.checkout-btn{
-display:block;
-margin:20px auto;
-padding:10px 20px;
-border:none;
-border-radius:20px;
-background:green;
-color:white;
-cursor:pointer;
-font-size:16px;
-}
+body{margin:0;font-family:Poppins,sans-serif;background:#f8f8f8;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+.logo{font-size:26px;font-weight:bold;cursor:pointer;}
+.nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
+main{padding:20px;max-width:900px;margin:auto;}
+.cart-item{display:flex;justify-content:space-between;align-items:center;background:white;padding:15px;margin-bottom:15px;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+.cart-item img{width:80px;border-radius:10px;}
+.cart-item h3{margin:0;}
+.cart-item p{margin:5px 0;}
+.cart-item input{width:50px;padding:5px;border-radius:5px;border:1px solid #ccc;}
+.cart-item button{padding:8px 12px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;}
+#totalAmount{font-size:20px;font-weight:bold;text-align:right;margin-top:20px;}
+#checkoutBtn{padding:10px 15px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;float:right;margin-top:10px;}
 </style>
 </head>
-
 <body>
 
 <header class="navbar">
-
-<div class="logo" onclick="redirect('home.html')">
-Hansi Store
-</div>
-
+<div class="logo" onclick="redirect('home.html')">Hansi Store</div>
 <div class="nav-icons">
-
-<span onclick="redirect('home.html')">🏠 Home</span>
 <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+<span onclick="redirect('cart.html')">🛒 Cart</span>
 <span onclick="redirect('orders.html')">📦 My Orders</span>
 <span onclick="redirect('profile.html')">👤 Profile</span>
-
 </div>
-
 </header>
 
 <main>
-
-<h2 style="text-align:center;">My Cart</h2>
-
+<h1>My Cart</h1>
 <div id="cartContainer"></div>
-
-<div class="total-box" id="totalPrice"></div>
-
-<button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
-
+<div id="totalAmount"></div>
+<button id="checkoutBtn">Checkout</button>
 </main>
 
 <script>
+function redirect(page){ window.location.href=page; }
 
-function redirect(page){
-window.location.href=page;
-}
+// ===== LOGIN CHECK =====
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!loggedInUser){ alert("Please login first"); redirect("index.html"); }
 
-// LOGIN CHECK
-let user = JSON.parse(localStorage.getItem("loggedInUser"));
-
-if(!user){
-alert("Please login first");
-redirect("index.html");
-}
-
-// PRODUCTS
+// ===== PRODUCTS =====
 const products=[
-{id:1,name:"Product A",price:499},
-{id:2,name:"Product B",price:799},
-{id:3,name:"Product C",price:299},
-{id:4,name:"Product D",price:999}
+{id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200?text=A"},
+{id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200?text=B"},
+{id:3,name:"Product C",price:299,image:"https://via.placeholder.com/200?text=C"},
+{id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200?text=D"}
 ];
 
-// CART STORAGE
+// ===== LOAD CART =====
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-function saveCart(){
-localStorage.setItem("cart",JSON.stringify(cart));
-}
+function saveCart(){ localStorage.setItem("cart",JSON.stringify(cart)); }
 
-// RENDER CART
 function renderCart(){
+    const container = document.getElementById("cartContainer");
+    container.innerHTML="";
+    if(cart.length===0){ container.innerHTML="<p>Your cart is empty</p>"; document.getElementById("totalAmount").innerText=""; return; }
 
-let container=document.getElementById("cartContainer");
+    let total = 0;
+    cart.forEach(item=>{
+        const product = products.find(p=>p.id===item.id);
+        if(!product) return;
+        const div = document.createElement("div");
+        div.className="cart-item";
+        div.innerHTML=`
+            <img src="${product.image}">
+            <div>
+                <h3>${product.name}</h3>
+                <p>Price: ₹${product.price}</p>
+                <p>Quantity: <input type="number" min="1" value="${item.quantity}" id="qty-${item.id}"></p>
+            </div>
+            <div>
+                <button id="remove-${item.id}">Remove</button>
+            </div>
+        `;
+        container.appendChild(div);
 
-container.innerHTML="";
+        // quantity change
+        const qtyInput = document.getElementById(`qty-${item.id}`);
+        qtyInput.addEventListener("change",(e)=>{
+            let val = parseInt(e.target.value);
+            if(val<1) val=1;
+            item.quantity = val;
+            saveCart();
+            renderCart();
+        });
 
-let total=0;
+        // remove button
+        document.getElementById(`remove-${item.id}`).addEventListener("click",()=>{
+            cart = cart.filter(c=>c.id!==item.id);
+            saveCart();
+            renderCart();
+        });
 
-if(cart.length===0){
-container.innerHTML="<h3>Your cart is empty</h3>";
-document.getElementById("totalPrice").innerText="";
-return;
+        total += product.price * item.quantity;
+    });
+
+    document.getElementById("totalAmount").innerText = `Total: ₹${total}`;
 }
 
-cart.forEach(item=>{
+// ===== CHECKOUT =====
+document.getElementById("checkoutBtn").addEventListener("click",()=>{
+    if(cart.length===0){ alert("Cart is empty"); return; }
+    // Save orders
+    let allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+    if(!allOrders[loggedInUser.username]) allOrders[loggedInUser.username]=[];
+    cart.forEach(item=>{ allOrders[loggedInUser.username].push(item); });
+    localStorage.setItem("orders",JSON.stringify(allOrders));
 
-let product = products.find(p=>p.id===item.id);
-
-let div=document.createElement("div");
-
-div.className="cart-item";
-
-div.innerHTML=`
-
-<div>
-<h3>${product.name}</h3>
-<p>₹${product.price}</p>
-</div>
-
-<div>
-
-<button onclick="decrease(${item.id})">-</button>
-
-${item.quantity}
-
-<button onclick="increase(${item.id})">+</button>
-
-<button onclick="removeItem(${item.id})">Remove</button>
-
-</div>
-
-`;
-
-container.appendChild(div);
-
-total += product.price * item.quantity;
-
+    // Clear cart
+    cart=[];
+    saveCart();
+    renderCart();
+    alert("Order placed successfully!");
+    redirect("orders.html");
 });
 
-document.getElementById("totalPrice").innerText="Total: ₹"+total;
-
-}
-
-// INCREASE
-function increase(id){
-
-cart.forEach(item=>{
-if(item.id===id){
-item.quantity++;
-}
-});
-
-saveCart();
+// INITIAL RENDER
 renderCart();
-
-}
-
-// DECREASE
-function decrease(id){
-
-cart.forEach(item=>{
-if(item.id===id && item.quantity>1){
-item.quantity--;
-}
-});
-
-saveCart();
-renderCart();
-
-}
-
-// REMOVE
-function removeItem(id){
-
-cart = cart.filter(item=>item.id!==id);
-
-saveCart();
-renderCart();
-
-}
-
-// CHECKOUT
-function checkout(){
-
-if(cart.length===0){
-alert("Cart empty");
-return;
-}
-
-redirect("checkout.html");
-
-}
-
-renderCart();
-
 </script>
 
 </body>
 </html>
-```
-
