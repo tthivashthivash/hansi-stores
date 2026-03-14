@@ -3,38 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MiniMeesho Login / Signup</title>
+<title>Hansi Store Login / Signup</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;display:flex;justify-content:center;align-items:center;height:100vh;}
-.container{background:white;padding:30px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.2);width:350px;}
-h2{text-align:center;margin-bottom:20px;}
-input{width:100%;padding:10px;margin:10px 0;border:1px solid #ccc;border-radius:5px;}
-button{width:100%;padding:10px;margin:10px 0;border:none;border-radius:5px;background:violet;color:white;font-size:16px;cursor:pointer;transition:0.3s;}
-button:hover{opacity:0.8;}
-.toggle{color:blue;cursor:pointer;text-align:center;margin-top:10px;text-decoration:underline;}
+body {
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.container {
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    width:360px;
+}
+h2 {
+    text-align:center;
+    margin-bottom:20px;
+}
+input {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+button {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:none;
+    border-radius:5px;
+    background:violet;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+button:hover {
+    opacity:0.8;
+}
+.toggle {
+    color:blue;
+    cursor:pointer;
+    text-align:center;
+    margin-top:10px;
+    text-decoration:underline;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
     <h2 id="formTitle">Login</h2>
-    <input type="text" id="username" placeholder="Enter username">
-    <input type="password" id="password" placeholder="Enter password">
+    <input type="text" id="phone" placeholder="Phone Number" style="display:none;">
+    <input type="email" id="email" placeholder="Email" style="display:none;">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
     <button id="submitBtn">Login</button>
     <div class="toggle" id="toggleForm">Don't have an account? Signup</div>
 </div>
 
 <script>
-// ====== Redirect Function ======
+// ===== Redirect Function =====
 function redirect(page){
     window.location.href = page;
 }
 
-// ====== Toggle Login / Signup ======
+// ===== Toggle Login / Signup =====
 let isLogin = true;
 const formTitle = document.getElementById("formTitle");
 const submitBtn = document.getElementById("submitBtn");
 const toggleForm = document.getElementById("toggleForm");
+const phoneInput = document.getElementById("phone");
+const emailInput = document.getElementById("email");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
 toggleForm.addEventListener("click",()=>{
     isLogin = !isLogin;
@@ -42,42 +90,51 @@ toggleForm.addEventListener("click",()=>{
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
+        phoneInput.style.display="none";
+        emailInput.style.display="none";
     }else{
         formTitle.innerText="Signup";
         submitBtn.innerText="Signup";
         toggleForm.innerText="Already have an account? Login";
+        phoneInput.style.display="block";
+        emailInput.style.display="block";
     }
 });
 
-// ====== Submit Login / Signup ======
+// ===== Submit Login / Signup =====
 submitBtn.addEventListener("click",()=>{
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    if(username==="" || password===""){
-        alert("Please enter both fields!");
-        return;
-    }
-
-    let users = JSON.parse(localStorage.getItem("users") || "[]");
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const email = emailInput.value.trim();
 
     if(isLogin){
-        // Login
+        if(username==="" || password===""){
+            alert("Enter both username and password!");
+            return;
+        }
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
         const user = users.find(u=>u.username===username && u.password===password);
         if(user){
             localStorage.setItem("loggedInUser", username);
             alert("Login Successful!");
-            redirect("home.html"); // ✅ Correct redirect to Home page
+            redirect("home.html");
         }else{
             alert("Invalid username or password!");
         }
     }else{
         // Signup
+        if(username==="" || password==="" || phone==="" || email===""){
+            alert("All fields are required!");
+            return;
+        }
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
         const exist = users.find(u=>u.username===username);
         if(exist){
             alert("Username already exists!");
             return;
         }
-        users.push({username,password});
+        users.push({username,password,phone,email});
         localStorage.setItem("users", JSON.stringify(users));
         alert("Signup Successful! Please login.");
         // Switch to login
@@ -85,6 +142,12 @@ submitBtn.addEventListener("click",()=>{
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
+        phoneInput.style.display="none";
+        emailInput.style.display="none";
+        phoneInput.value="";
+        emailInput.value="";
+        passwordInput.value="";
+        usernameInput.value="";
     }
 });
 </script>
