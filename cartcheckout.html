@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <title>Checkout</title>
 
 <style>
-
 body{
 font-family:Poppins;
 background:#f8f8f8;
@@ -19,12 +19,6 @@ width:300px;
 border-radius:10px;
 }
 
-input{
-padding:8px;
-width:80%;
-margin:10px;
-}
-
 button{
 padding:10px 15px;
 background:violet;
@@ -35,76 +29,25 @@ cursor:pointer;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="box">
 
-<h2 id="name"></h2>
+<h2>Checkout Page</h2>
 
-<p id="price"></p>
+<p>Order your product</p>
 
-<p>Quantity</p>
-
-<input type="number" id="qty" value="1" min="1">
-
-<p id="total"></p>
-
-<button onclick="order()">Place Order</button>
+<button onclick="place()">Place Order</button>
 
 </div>
 
 <script>
 
-const products=[
+function place(){
 
-{id:1,name:"Product A",price:499},
-{id:2,name:"Product B",price:799},
-{id:3,name:"Product C",price:299},
-{id:4,name:"Product D",price:999}
-
-];
-
-const id=parseInt(localStorage.getItem("buyProduct"));
-
-const product=products.find(p=>p.id===id);
-
-document.getElementById("name").innerText=product.name;
-
-document.getElementById("price").innerText="Price : ₹"+product.price;
-
-const qty=document.getElementById("qty");
-
-function update(){
-
-let total=qty.value*product.price;
-
-document.getElementById("total").innerText="Total : ₹"+total;
-
-}
-
-qty.oninput=update;
-
-update();
-
-function order(){
-
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
-
-orders.push({
-
-name:product.name,
-price:product.price,
-qty:qty.value,
-total:qty.value*product.price
-
-});
-
-localStorage.setItem("orders",JSON.stringify(orders));
-
-alert("Order placed");
+alert("Order placed successfully");
 
 window.location.href="orders.html";
 
