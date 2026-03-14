@@ -3,115 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Details - MiniMeesho</title>
+<title>Hansi Store - Product Details</title>
 <style>
-/* ====== General Styles ====== */
-body{margin:0;font-family:Arial,sans-serif;}
-header.navbar{display:flex;justify-content: space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
-header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
-header .nav-icons span{margin-left:20px;cursor:pointer;}
-header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
-footer{background:#f1f1f1;text-align:center;padding:20px;}
-footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
-footer span:hover, header .nav-icons span:hover{opacity:0.8;}
+body {margin:0;font-family:'Poppins',sans-serif;background:#f8f8f8;}
+header.navbar {display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:linear-gradient(135deg,violet,skyblue); color:white;}
+header .logo {font-size:24px; font-weight:bold; cursor:pointer;}
+header .nav-icons span {margin-left:20px; cursor:pointer;}
+header .search-bar {padding:5px 10px; border-radius:5px; border:none;}
+footer {background:#f1f1f1;text-align:center;padding:20px;}
+footer span {cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
+footer span:hover, header .nav-icons span:hover {opacity:0.8;}
 
-/* ====== Product Details ====== */
-main{padding:20px;max-width:800px;margin:auto;}
-.product-container{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
-.product-image{flex:1;min-width:250px;text-align:center;}
-.product-image img{width:100%;border-radius:10px;}
-.product-info{flex:1;min-width:250px;}
-.product-info h2{margin-top:0;}
-.product-info p{margin:5px 0;font-size:16px;}
-.product-info button{padding:10px 15px;margin:5px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;}
-.product-info button:hover{opacity:0.8;}
+/* ===== Product Section ===== */
+main {padding:20px; max-width:1000px; margin:auto;}
+.product-details {display:flex; flex-wrap:wrap; gap:30px; background:white; padding:20px; border-radius:15px; box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+.product-image {flex:1; min-width:300px; text-align:center;}
+.product-image img {width:100%; border-radius:10px; cursor:pointer;}
+.product-info {flex:1; min-width:300px;}
+.product-info h2 {margin-top:0;}
+.product-info p {margin:5px 0; font-size:16px;}
+.product-info button {padding:10px 15px; margin:5px; border:none; border-radius:5px; background:violet; color:white; cursor:pointer; transition:0.3s;}
+.product-info button:hover {opacity:0.8;}
+
+/* ===== Related Products ===== */
+.related-container {margin-top:40px;}
+.related-container h3 {margin-bottom:15px;}
+.related-products {display:flex; flex-wrap:wrap; gap:20px;}
+.related-card {background:white; padding:10px; border-radius:10px; width:180px; text-align:center; box-shadow:0 3px 6px rgba(0,0,0,0.1); cursor:pointer; transition:0.3s;}
+.related-card:hover {transform:translateY(-5px); box-shadow:0 6px 12px rgba(0,0,0,0.2);}
+.related-card img {width:100%; border-radius:10px;}
+.related-card h4 {margin:8px 0;}
+.related-card p {font-weight:bold;}
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header class="navbar">
-    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
-    <input type="text" placeholder="Search products..." class="search-bar">
-    <div class="nav-icons">
-        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
-        <span onclick="redirect('cart.html')">🛒 Cart</span>
-        <span onclick="redirect('profile.html')">👤 Profile</span>
-    </div>
+  <div class="logo" onclick="redirect('home.html')">Hansi Store</div>
+  <input type="text" placeholder="Search products..." class="search-bar">
+  <div class="nav-icons">
+    <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+    <span onclick="redirect('cart.html')">🛒 Cart</span>
+    <span onclick="redirect('profile.html')">👤 Profile</span>
+  </div>
 </header>
 
-<!-- Main Content -->
 <main>
-    <div class="product-container" id="productContainer">
-        <!-- Product details will be loaded here -->
-    </div>
+  <div class="product-details" id="productContainer">
+    <!-- Product details loaded here -->
+  </div>
+
+  <div class="related-container">
+    <h3>Related Products</h3>
+    <div class="related-products" id="relatedProducts"></div>
+  </div>
 </main>
 
-<!-- Footer -->
 <footer>
-    <p>MiniMeesho © 2026 | 
-        <span onclick="redirect('about.html')">About</span> | 
-        <span onclick="redirect('contact.html')">Contact</span> | 
-        <span onclick="redirect('terms.html')">Terms</span>
-    </p>
+  <p>Hansi Store © 2026 | 
+    <span onclick="redirect('about.html')">About</span> | 
+    <span onclick="redirect('contact.html')">Contact</span> | 
+    <span onclick="redirect('terms.html')">Terms</span>
+  </p>
 </footer>
 
 <script>
-// ====== Redirect Function ======
-function redirect(page){
-    window.location.href = page;
-}
+// ===== Redirect =====
+function redirect(page){ window.location.href = page; }
 
-// ====== Dummy Products Data (same as Step2) ======
+// ===== Dummy Products =====
 const products = [
-    {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/300x300?text=A",description:"This is Product A"},
-    {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/300x300?text=B",description:"This is Product B"},
-    {id:3,name:"Product C",price:299,image:"https://via.placeholder.com/300x300?text=C",description:"This is Product C"},
-    {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/300x300?text=D",description:"This is Product D"},
+  {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/300x300?text=A",description:"This is Product A"},
+  {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/300x300?text=B",description:"This is Product B"},
+  {id:3,name:"Product C",price:299,image:"https://via.placeholder.com/300x300?text=C",description:"This is Product C"},
+  {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/300x300?text=D",description:"This is Product D"},
 ];
 
-// ====== Read Product ID from URL ======
-function getProductId(){
-    const params = new URLSearchParams(window.location.search);
-    return parseInt(params.get('id'));
+// ===== Get selected product =====
+const selectedId = parseInt(localStorage.getItem("selectedProduct"));
+const selectedProduct = products.find(p=>p.id===selectedId);
+
+// ===== Render main product =====
+const container = document.getElementById("productContainer");
+if(!selectedProduct){
+  container.innerHTML = "<h2>Product not found!</h2>";
+}else{
+  container.innerHTML = `
+    <div class="product-image">
+      <img src="${selectedProduct.image}" alt="${selectedProduct.name}">
+    </div>
+    <div class="product-info">
+      <h2>${selectedProduct.name}</h2>
+      <p><strong>Price:</strong> ₹${selectedProduct.price}</p>
+      <p>${selectedProduct.description}</p>
+      <button onclick="addToCart(${selectedProduct.id})">Add to Cart</button>
+      <button onclick="buyNow(${selectedProduct.id})">Buy Now</button>
+    </div>
+  `;
 }
 
-// ====== Render Product Details ======
-function renderProduct(){
-    const id = getProductId();
-    const product = products.find(p => p.id === id);
-    if(!product){
-        document.getElementById('productContainer').innerHTML="<h2>Product not found!</h2>";
-        return;
-    }
+// ===== Related Products =====
+const relatedContainer = document.getElementById("relatedProducts");
+products.filter(p=>p.id !== selectedId).forEach(p=>{
+  const div = document.createElement("div");
+  div.className = "related-card";
+  div.innerHTML = `
+    <img src="${p.image}" alt="${p.name}" onclick="viewProduct(${p.id})">
+    <h4 onclick="viewProduct(${p.id})">${p.name}</h4>
+    <p>₹${p.price}</p>
+  `;
+  relatedContainer.appendChild(div);
+});
 
-    const container = document.getElementById('productContainer');
-    container.innerHTML = `
-        <div class="product-image">
-            <img src="${product.image}" alt="${product.name}">
-        </div>
-        <div class="product-info">
-            <h2>${product.name}</h2>
-            <p><strong>Price:</strong> ₹${product.price}</p>
-            <p>${product.description}</p>
-            <button onclick="addToCart(${product.id})">Add to Cart</button>
-            <button onclick="buyNow(${product.id})">Buy Now</button>
-        </div>
-    `;
-}
-
-// ====== Actions ======
+// ===== Add to Cart =====
 function addToCart(id){
-    alert("Product "+id+" added to cart!");
-    // Later: Save to LocalStorage
-}
-function buyNow(id){
-    alert("Buying Product "+id+" now!");
-    // Later: Redirect to checkout / place order
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const exist = cart.find(item=>item.id===id);
+  if(exist){ exist.quantity += 1; }
+  else{ cart.push({id, quantity:1}); }
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("Added to cart!");
 }
 
-// ====== Initialize ======
-renderProduct();
+// ===== Buy Now =====
+function buyNow(id){
+  localStorage.setItem("checkoutProduct", id); // save for checkout
+  redirect("checkout.html"); // redirect to checkout page
+}
+
+// ===== View Product =====
+function viewProduct(id){
+  localStorage.setItem("selectedProduct", id);
+  redirect("product.html");
+}
 </script>
 
 </body>
