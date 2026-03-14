@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,22 +73,20 @@ font-weight:bold;
 color:violet;
 }
 
-/* ❤️ HEART STYLE */
+/* HEART STYLE */
 
 .wishlist-btn{
 position:absolute;
 top:10px;
 right:10px;
 font-size:22px;
-color:white;
-text-shadow:0 0 2px black;
+color:#bbb;
 cursor:pointer;
 transition:0.3s;
 }
 
 .wishlist-btn.active{
 color:red;
-text-shadow:none;
 }
 
 </style>
@@ -116,9 +115,7 @@ Hansi Store
 
 </header>
 
-
 <main id="productsContainer"></main>
-
 
 <script>
 
@@ -128,13 +125,11 @@ window.location.href = page;
 }
 
 // login user
-let loggedInUser = localStorage.getItem("loggedInUser");
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
 if(!loggedInUser){
-alert("Please login first.");
+alert("Please login first");
 redirect("index.html");
-}else{
-loggedInUser = JSON.parse(loggedInUser);
 }
 
 // products
@@ -170,7 +165,7 @@ const card=document.createElement("div");
 
 card.className="product-card";
 
-const userWishlist = allWishlists[loggedInUser.username];
+let userWishlist = allWishlists[loggedInUser.username];
 
 card.innerHTML=`
 
@@ -228,4 +223,6 @@ container.appendChild(card);
 
 </body>
 </html>
+```
+
 
