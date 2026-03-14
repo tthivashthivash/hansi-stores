@@ -26,12 +26,12 @@ button:hover{opacity:0.8;}
 </div>
 
 <script>
-// ====== Redirect ======
+// ====== Redirect Function ======
 function redirect(page){
     window.location.href = page;
 }
 
-// ====== Toggle Login/Signup ======
+// ====== Toggle Login / Signup ======
 let isLogin = true;
 const formTitle = document.getElementById("formTitle");
 const submitBtn = document.getElementById("submitBtn");
@@ -67,7 +67,7 @@ submitBtn.addEventListener("click",()=>{
         if(user){
             localStorage.setItem("loggedInUser", username);
             alert("Login Successful!");
-            redirect("index.html"); // Redirect to Home page (Step1)
+            redirect("home.html"); // ✅ Correct redirect to Home page
         }else{
             alert("Invalid username or password!");
         }
