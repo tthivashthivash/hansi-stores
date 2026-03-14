@@ -40,26 +40,6 @@ border-radius:5px;
 border:none;
 }
 
-footer{
-background:#f1f1f1;
-text-align:center;
-padding:20px;
-}
-
-footer span{
-cursor:pointer;
-color:blue;
-text-decoration:underline;
-margin:0 5px;
-}
-
-footer span:hover,
-header .nav-icons span:hover{
-opacity:0.8;
-}
-
-/* Wishlist */
-
 main{
 padding:20px;
 max-width:900px;
@@ -80,7 +60,6 @@ width:200px;
 text-align:center;
 padding:10px;
 background:white;
-transition:0.3s;
 }
 
 .wishlist-item img{
@@ -108,16 +87,11 @@ color:white;
 cursor:pointer;
 }
 
-.wishlist-item button:hover{
-opacity:0.8;
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <header class="navbar">
 
 <div class="logo" onclick="redirect('home.html')">
@@ -140,7 +114,6 @@ MiniMeesho
 
 </header>
 
-<!-- MAIN -->
 <main>
 
 <h1 style="text-align:center;">Your Wishlist</h1>
@@ -149,26 +122,13 @@ MiniMeesho
 
 </main>
 
-<!-- FOOTER -->
-<footer>
-
-<p>MiniMeesho © 2026 | 
-<span onclick="redirect('about.html')">About</span> | 
-<span onclick="redirect('contact.html')">Contact</span> | 
-<span onclick="redirect('terms.html')">Terms</span>
-</p>
-
-</footer>
-
 <script>
 
-// redirect
 function redirect(page){
 window.location.href = page;
 }
 
-// products
-const products = [
+const products=[
 
 {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200x200?text=A"},
 
@@ -181,49 +141,50 @@ const products = [
 ];
 
 // login user
-let loggedInUser = localStorage.getItem("loggedInUser");
+let loggedInUser=localStorage.getItem("loggedInUser");
 
 if(!loggedInUser){
 
 alert("Please login first");
-
 redirect("index.html");
 
 }
 
-loggedInUser = JSON.parse(loggedInUser).username;
+loggedInUser=JSON.parse(loggedInUser).username;
 
 
-// wishlist storage
-let allWishlist = JSON.parse(localStorage.getItem("wishlist") || "{}");
+// wishlist data
+let allWishlists=JSON.parse(localStorage.getItem("wishlist")||"{}");
 
-if(!allWishlist[loggedInUser]){
-
-allWishlist[loggedInUser] = [];
-
+if(!allWishlists[loggedInUser]){
+allWishlists[loggedInUser]=[];
 }
 
-const container = document.getElementById("wishlistContainer");
+// save
+function saveWishlist(){
+localStorage.setItem("wishlist",JSON.stringify(allWishlists));
+}
 
 
-// render
+// render wishlist
 function renderWishlist(){
+
+const container=document.getElementById("wishlistContainer");
 
 container.innerHTML="";
 
-let userWishlist = allWishlist[loggedInUser];
+let userWishlist=allWishlists[loggedInUser];
 
 if(userWishlist.length===0){
 
 container.innerHTML="<p>Your wishlist is empty</p>";
-
 return;
 
 }
 
 userWishlist.forEach(pid=>{
 
-const product = products.find(p=>p.id===pid);
+const product=products.find(p=>p.id===pid);
 
 if(!product) return;
 
@@ -262,14 +223,14 @@ redirect("product.html");
 }
 
 
-// remove
+// remove wishlist
 function removeFromWishlist(id){
 
-let userWishlist = allWishlist[loggedInUser];
+let userWishlist=allWishlists[loggedInUser];
 
-allWishlist[loggedInUser] = userWishlist.filter(pid=>pid!==id);
+allWishlists[loggedInUser]=userWishlist.filter(pid=>pid!==id);
 
-localStorage.setItem("wishlist",JSON.stringify(allWishlist));
+saveWishlist();
 
 renderWishlist();
 
