@@ -1,98 +1,172 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Product Details</title>
+
 <style>
-body{margin:0;font-family:'Poppins',sans-serif;background:#f8f8f8;}
-header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;box-shadow:0 3px 8px rgba(0,0,0,0.1);}
-header .logo{font-size:26px;font-weight:bold;cursor:pointer;}
-header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
-main{padding:20px;}
-.product-detail{max-width:500px;margin:30px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
-.product-detail h2{margin-bottom:10px;}
-.product-detail p{margin:10px 0;font-size:18px;}
-.product-detail button{
-    padding:10px 15px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;transition:0.3s;margin-right:10px;
+body{
+margin:0;
+font-family:Poppins,sans-serif;
+background:#f8f8f8;
 }
-.product-detail button:hover{opacity:0.8;}
+
+header.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:linear-gradient(135deg,violet,skyblue);
+color:white;
+}
+
+.logo{
+font-size:26px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.nav-icons span{
+margin-left:20px;
+cursor:pointer;
+font-weight:bold;
+}
+
+main{
+padding:20px;
+}
+
+.product-detail{
+max-width:500px;
+margin:30px auto;
+padding:20px;
+background:white;
+border-radius:15px;
+box-shadow:0 3px 6px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.product-detail button{
+padding:10px 15px;
+border:none;
+border-radius:20px;
+background:violet;
+color:white;
+cursor:pointer;
+margin:5px;
+}
 </style>
 </head>
+
 <body>
 
 <header class="navbar">
-    <div class="logo" onclick="redirect('home.html')">Hansi Store</div>
-    <div class="nav-icons">
-        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
-        <span onclick="redirect('cart.html')">🛒 Cart</span>
-        <span onclick="redirect('orders.html')">📦 My Orders</span>
-        <span onclick="redirect('profile.html')">👤 Profile</span>
-    </div>
+
+<div class="logo" onclick="redirect('home.html')">
+Hansi Store
+</div>
+
+<div class="nav-icons">
+
+<span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+<span onclick="redirect('cart.html')">🛒 Cart</span>
+<span onclick="redirect('orders.html')">📦 My Orders</span>
+<span onclick="redirect('profile.html')">👤 Profile</span>
+
+</div>
+
 </header>
 
 <main>
-    <div class="product-detail" id="productDetail"></div>
+
+<div class="product-detail" id="productDetail"></div>
+
 </main>
 
 <script>
-// ===== Redirect =====
-function redirect(page){ window.location.href = page; }
 
-// ===== Logged-in Check =====
-const loggedInUser = localStorage.getItem("loggedInUser");
-if(!loggedInUser){ 
-    alert("Please login first."); 
-    redirect("index.html"); 
+function redirect(page){
+window.location.href = page;
 }
 
-// ===== Dummy Products =====
-const products = [
-    {id:1,name:"Product A",price:499, description:"This is Product A description."},
-    {id:2,name:"Product B",price:799, description:"This is Product B description."},
-    {id:3,name:"Product C",price:299, description:"This is Product C description."},
-    {id:4,name:"Product D",price:999, description:"This is Product D description."}
+// LOGIN CHECK
+const user = localStorage.getItem("loggedInUser");
+
+if(!user){
+alert("Please login first");
+redirect("index.html");
+}
+
+// PRODUCTS
+const products=[
+{id:1,name:"Product A",price:499,description:"This is Product A"},
+{id:2,name:"Product B",price:799,description:"This is Product B"},
+{id:3,name:"Product C",price:299,description:"This is Product C"},
+{id:4,name:"Product D",price:999,description:"This is Product D"}
 ];
 
-// ===== Load Selected Product =====
-const selectedId = parseInt(localStorage.getItem("selectedProduct"));
-const product = products.find(p=>p.id === selectedId);
-const detailDiv = document.getElementById("productDetail");
+// SELECTED PRODUCT
+const selectedId=parseInt(localStorage.getItem("selectedProduct"));
+
+const product=products.find(p=>p.id===selectedId);
+
+const detail=document.getElementById("productDetail");
 
 if(product){
-    detailDiv.innerHTML = `
-        <h2>${product.name}</h2>
-        <p>Price: ₹${product.price}</p>
-        <p>${product.description}</p>
-        <button onclick="addToCart(${product.id})">Add to Cart</button>
-        <button onclick="buyNow(${product.id})">Buy Now</button>
-    `;
+
+detail.innerHTML=`
+
+<h2>${product.name}</h2>
+
+<p>Price : ₹${product.price}</p>
+
+<p>${product.description}</p>
+
+<button onclick="addToCart(${product.id})">Add To Cart</button>
+
+<button onclick="buyNow(${product.id})">Buy Now</button>
+
+`;
+
 }else{
-    detailDiv.innerHTML = "<p>Product not found!</p>";
+
+detail.innerHTML="<p>Product not found</p>";
+
 }
 
-// ===== Add to Cart =====
+// ADD TO CART
 function addToCart(id){
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const exist = cart.find(item=>item.id===id);
-    if(exist){ exist.quantity += 1; }
-    else{ cart.push({id, quantity:1}); }
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Added to cart!");
+
+let cart=JSON.parse(localStorage.getItem("cart") || "[]");
+
+let exist=cart.find(item=>item.id===id);
+
+if(exist){
+
+exist.qty++;
+
+}else{
+
+cart.push({id:id,qty:1});
+
 }
 
-// ===== Buy Now =====
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("Added to Cart");
+
+}
+
+// BUY NOW
 function buyNow(id){
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const exist = cart.find(item=>item.id===id);
-    if(exist){ exist.quantity += 1; }
-    else{ cart.push({id, quantity:1}); }
-    localStorage.setItem("cart", JSON.stringify(cart));
 
-    // Redirect to cart page
-    redirect("cart.html");
+localStorage.setItem("buyProduct",id);
+
+redirect("checkout.html");
+
 }
+
 </script>
 
 </body>
