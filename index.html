@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,16 +61,16 @@ button:hover {
 
 <div class="container">
     <h2 id="formTitle">Login</h2>
-    <input type="text" id="phone" placeholder="Phone Number" style="display:none;">
-    <input type="email" id="email" placeholder="Email" style="display:none;">
+    <input type="text" id="mobile" placeholder="Mobile Number" style="display:none;">
     <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email" style="display:none;">
     <input type="password" id="password" placeholder="Password">
     <button id="submitBtn">Login</button>
     <div class="toggle" id="toggleForm">Don't have an account? Signup</div>
 </div>
 
 <script>
-// ===== Redirect Function =====
+// ===== Redirect =====
 function redirect(page){
     window.location.href = page;
 }
@@ -79,41 +80,42 @@ let isLogin = true;
 const formTitle = document.getElementById("formTitle");
 const submitBtn = document.getElementById("submitBtn");
 const toggleForm = document.getElementById("toggleForm");
-const phoneInput = document.getElementById("phone");
-const emailInput = document.getElementById("email");
+const mobileInput = document.getElementById("mobile");
 const usernameInput = document.getElementById("username");
+const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 
-toggleForm.addEventListener("click",()=>{
+toggleForm.addEventListener("click", ()=>{
     isLogin = !isLogin;
     if(isLogin){
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
-        phoneInput.style.display="none";
+        mobileInput.style.display="none";
         emailInput.style.display="none";
     }else{
         formTitle.innerText="Signup";
         submitBtn.innerText="Signup";
         toggleForm.innerText="Already have an account? Login";
-        phoneInput.style.display="block";
+        mobileInput.style.display="block";
         emailInput.style.display="block";
     }
 });
 
 // ===== Submit Login / Signup =====
-submitBtn.addEventListener("click",()=>{
+submitBtn.addEventListener("click", ()=>{
+    const mobile = mobileInput.value.trim();
     const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-    const phone = phoneInput.value.trim();
     const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    let users = JSON.parse(localStorage.getItem("users") || "[]");
 
     if(isLogin){
-        if(username==="" || password===""){
+        if(username === "" || password === ""){
             alert("Enter both username and password!");
             return;
         }
-        let users = JSON.parse(localStorage.getItem("users") || "[]");
         const user = users.find(u=>u.username===username && u.password===password);
         if(user){
             localStorage.setItem("loggedInUser", username);
@@ -124,30 +126,29 @@ submitBtn.addEventListener("click",()=>{
         }
     }else{
         // Signup
-        if(username==="" || password==="" || phone==="" || email===""){
+        if(mobile==="" || username==="" || email==="" || password===""){
             alert("All fields are required!");
             return;
         }
-        let users = JSON.parse(localStorage.getItem("users") || "[]");
         const exist = users.find(u=>u.username===username);
         if(exist){
             alert("Username already exists!");
             return;
         }
-        users.push({username,password,phone,email});
+        users.push({mobile, username, email, password});
         localStorage.setItem("users", JSON.stringify(users));
         alert("Signup Successful! Please login.");
-        // Switch to login
+        // Switch to login view
         isLogin = true;
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
-        phoneInput.style.display="none";
+        mobileInput.style.display="none";
         emailInput.style.display="none";
-        phoneInput.value="";
+        mobileInput.value="";
         emailInput.value="";
-        passwordInput.value="";
         usernameInput.value="";
+        passwordInput.value="";
     }
 });
 </script>
