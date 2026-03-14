@@ -86,10 +86,6 @@ const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 
-// Default: hide mobile & email for login
-mobileInput.style.display = "none";
-emailInput.style.display = "none";
-
 toggleForm.addEventListener("click", ()=>{
     isLogin = !isLogin;
     if(isLogin){
@@ -118,15 +114,15 @@ submitBtn.addEventListener("click", ()=>{
 
     if(isLogin){
         // LOGIN
-        if(username === "" || password === "" || mobile === "" || email === ""){
-            alert("Enter all fields to login!");
+        if(username === "" || password === ""){
+            alert("Enter username and password to login!");
             return;
         }
-        const user = users.find(u=>u.username===username && u.password===password && u.mobile===mobile && u.email===email);
+        const user = users.find(u=>u.username===username && u.password===password);
         if(user){
-            localStorage.setItem("loggedInUser", username);
+            localStorage.setItem("loggedInUser", JSON.stringify(user)); // full user save
             alert("Login Successful!");
-            window.location.href = "home.html";
+            redirect("profile.html");
         }else{
             alert("Invalid credentials!");
         }
@@ -150,12 +146,12 @@ submitBtn.addEventListener("click", ()=>{
             return;
         }
         // Save user
-        users.push({mobile, username, email, password});
+        const newUser = {mobile, username, email, password};
+        users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
-        // ✅ Auto login and redirect
-        localStorage.setItem("loggedInUser", username);
-        alert("Signup Successful! Redirecting to Home...");
-        setTimeout(()=>{ window.location.href="home.html"; }, 100);
+        localStorage.setItem("loggedInUser", JSON.stringify(newUser)); // auto login
+        alert("Signup Successful! Redirecting to Profile...");
+        setTimeout(()=>{ redirect("profile.html"); }, 100);
     }
 });
 </script>
