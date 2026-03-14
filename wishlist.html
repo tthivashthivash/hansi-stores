@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MiniMeesho Wishlist</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;}
+body{margin:0;font-family:Arial,sans-serif;background:#f8f8f8;}
 header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
 header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;}
@@ -14,12 +14,13 @@ footer{background:#f1f1f1;text-align:center;padding:20px;}
 footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
 footer span:hover, header .nav-icons span:hover{opacity:0.8;}
 
-/* ====== Wishlist Styles ====== */
-main{padding:20px;max-width:800px;margin:auto;}
+/* Wishlist Styles */
+main{padding:20px;max-width:900px;margin:auto;}
 .wishlist-container{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
-.wishlist-item{border:1px solid #ccc;border-radius:10px;width:200px;text-align:center;padding:10px;transition:0.3s;}
-.wishlist-item img{width:100%;border-radius:10px;}
+.wishlist-item{border:1px solid #ccc;border-radius:10px;width:200px;text-align:center;padding:10px;background:white;transition:0.3s;position:relative;}
+.wishlist-item img{width:100%;border-radius:10px;cursor:pointer;}
 .wishlist-item h3{margin:10px 0 5px 0;}
+.wishlist-item p{margin:5px 0;color:gray;}
 .wishlist-item button{padding:8px 12px;margin:5px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;}
 .wishlist-item button:hover{opacity:0.8;}
 </style>
@@ -28,7 +29,7 @@ main{padding:20px;max-width:800px;margin:auto;}
 
 <!-- Header -->
 <header class="navbar">
-    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <div class="logo" onclick="redirect('home.html')">MiniMeesho</div>
     <input type="text" placeholder="Search products..." class="search-bar">
     <div class="nav-icons">
         <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
@@ -55,12 +56,10 @@ main{padding:20px;max-width:800px;margin:auto;}
 </footer>
 
 <script>
-// ====== Redirect ======
-function redirect(page){
-    window.location.href = page;
-}
+// ===== Redirect =====
+function redirect(page){ window.location.href = page; }
 
-// ====== Dummy Products Data ======
+// ===== Dummy Products Data =====
 const products = [
     {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200x200?text=A"},
     {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200x200?text=B"},
@@ -68,36 +67,46 @@ const products = [
     {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200x200?text=D"},
 ];
 
-// ====== Logged-in User ======
-const loggedInUser = localStorage.getItem("loggedInUser");
-if(!loggedInUser){
+// ===== Logged-in User =====
+let loggedInUser = localStorage.getItem("loggedInUser");
+if(loggedInUser){
+    // If stored as object string, parse it
+    try{ loggedInUser = JSON.parse(loggedInUser).username || loggedInUser; }catch(e){}
+} else {
     alert("Please login to view wishlist.");
     redirect("index.html");
 }
 
-// ====== Simulate Wishlist in LocalStorage ======
+// ===== Initialize Wishlist for user if not exists =====
 if(!localStorage.getItem("wishlist")){
-    // Sample wishlist for testing
-    localStorage.setItem("wishlist", JSON.stringify([
-        {username:"testuser",productIds:[1,3]}
-    ]));
+    localStorage.setItem("wishlist", JSON.stringify([]));
 }
 
-// ====== Render Wishlist ======
+// ===== Render Wishlist =====
 function renderWishlist(){
     const allWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    const userWishlist = allWishlist.find(w => w.username === loggedInUser);
+    let userWishlist = allWishlist.find(w => w.username === loggedInUser);
+    
+    // If user has no wishlist yet, initialize
+    if(!userWishlist){
+        userWishlist = {username:loggedInUser, productIds:[]};
+        allWishlist.push(userWishlist);
+        localStorage.setItem("wishlist", JSON.stringify(allWishlist));
+    }
+
     const container = document.getElementById("wishlistContainer");
     container.innerHTML = "";
-    if(!userWishlist || userWishlist.productIds.length===0){
+
+    if(userWishlist.productIds.length===0){
         container.innerHTML="<p>Your wishlist is empty.</p>";
         return;
     }
 
     userWishlist.productIds.forEach(pid=>{
-        const product = products.find(p=>p.id===pid);
+        const product = products.find(p => p.id === pid);
+        if(!product) return;
         const div = document.createElement("div");
-        div.className="wishlist-item";
+        div.className = "wishlist-item";
         div.innerHTML = `
             <img src="${product.image}" alt="${product.name}" onclick="viewProduct(${product.id})">
             <h3>${product.name}</h3>
@@ -108,13 +117,14 @@ function renderWishlist(){
     });
 }
 
-// ====== Actions ======
+// ===== Actions =====
 function viewProduct(id){
-    redirect(`example.html?id=${id}`);
+    localStorage.setItem("selectedProduct", id);
+    redirect("product.html");
 }
 
 function removeFromWishlist(id){
-    let allWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    const allWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
     const userWishlist = allWishlist.find(w => w.username === loggedInUser);
     if(userWishlist){
         userWishlist.productIds = userWishlist.productIds.filter(pid=>pid!==id);
@@ -123,7 +133,7 @@ function removeFromWishlist(id){
     }
 }
 
-// ====== Initialize ======
+// ===== Initialize =====
 renderWishlist();
 </script>
 
