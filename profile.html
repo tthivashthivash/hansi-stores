@@ -13,8 +13,18 @@ main{padding:20px;}
 .profile-card{max-width:400px;margin:40px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 .profile-card h2{margin-bottom:15px;color:#333;}
 .profile-card p{margin-bottom:10px;color:#555;}
-button.logout{padding:10px 15px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;transition:0.3s;}
-button.logout:hover{opacity:0.8;}
+button.logout, button.settings{
+    padding:10px 15px;
+    border:none;
+    border-radius:20px;
+    background:violet;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+    margin-right:10px;
+}
+button.logout:hover, button.settings:hover{opacity:0.8;}
+button.settings{background:skyblue;}
 </style>
 </head>
 <body>
@@ -33,6 +43,7 @@ button.logout:hover{opacity:0.8;}
         <h2>Profile</h2>
         <p><strong>Username:</strong> <span id="userName"></span></p>
         <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <button class="settings" onclick="redirect('settings.html')">Settings</button>
         <button class="logout" onclick="confirmLogout()">Logout</button>
     </div>
 </main>
@@ -48,7 +59,6 @@ if(!loggedInUser){
     redirect("index.html"); 
 } else { 
     document.getElementById("userName").innerText = loggedInUser; 
-    // Fetch real email if stored
     const users = JSON.parse(localStorage.getItem("users") || "[]");
     const user = users.find(u => u.username === loggedInUser);
     if(user && user.email) document.getElementById("userEmail").innerText = user.email;
@@ -57,8 +67,7 @@ if(!loggedInUser){
 
 // ===== Confirm Logout =====
 function confirmLogout(){
-    const yes = confirm("Are you sure you want to logout?");
-    if(yes){
+    if(confirm("Are you sure you want to logout?")){
         localStorage.removeItem("loggedInUser");
         alert("Logged out successfully!");
         redirect("index.html");
