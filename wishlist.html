@@ -116,7 +116,7 @@ const products=[
 
 ];
 
-// user
+// USER
 let user = JSON.parse(localStorage.getItem("loggedInUser"));
 
 if(!user){
@@ -126,18 +126,15 @@ redirect("index.html");
 
 let username = user.username;
 
-// wishlist data
+// WISHLIST DATA
 let wishlistData = JSON.parse(localStorage.getItem("wishlist") || "{}");
 
 if(!wishlistData[username]){
 wishlistData[username] = [];
-}
-
-function saveWishlist(){
 localStorage.setItem("wishlist",JSON.stringify(wishlistData));
 }
 
-// render
+// RENDER WISHLIST
 function renderWishlist(){
 
 let container=document.getElementById("wishlistContainer");
@@ -152,7 +149,7 @@ return;
 
 userWishlist.forEach(id=>{
 
-let product = products.find(p=>p.id===id);
+let product = products.find(p=>p.id==id);
 
 if(!product) return;
 
@@ -180,16 +177,18 @@ container.appendChild(div);
 
 }
 
+// REMOVE ITEM
 function removeItem(id){
 
-wishlistData[username] = wishlistData[username].filter(pid=>pid!==id);
+wishlistData[username] = wishlistData[username].filter(pid=>pid!=id);
 
-saveWishlist();
+localStorage.setItem("wishlist",JSON.stringify(wishlistData));
 
 renderWishlist();
 
 }
 
+// LOAD
 renderWishlist();
 
 </script>
