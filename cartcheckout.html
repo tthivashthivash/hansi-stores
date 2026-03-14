@@ -11,9 +11,12 @@ header .logo{font-size:26px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;max-width:600px;margin:auto;}
 .checkout-item{display:flex;justify-content:space-between;padding:15px;background:white;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.checkout-item span{font-weight:bold;}
 .total{margin-top:20px;font-size:20px;text-align:right;font-weight:bold;}
 .pay-btn{margin-top:15px;padding:10px 20px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;float:right;}
 .pay-btn:hover{opacity:0.8;}
+.user-info{margin-bottom:20px;padding:15px;background:white;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.user-info p{margin:5px 0;font-size:16px;}
 </style>
 </head>
 <body>
@@ -30,20 +33,28 @@ main{padding:20px;max-width:600px;margin:auto;}
 
 <main>
     <h2>Checkout</h2>
+
+    <!-- User Info -->
+    <div class="user-info" id="userInfo"></div>
+
+    <!-- Cart Items -->
     <div id="checkoutContainer"></div>
     <div class="total" id="totalAmount"></div>
     <button class="pay-btn" onclick="payNow()">Pay Now</button>
 </main>
 
 <script>
+// ===== Redirect =====
 function redirect(page){ window.location.href = page; }
 
-const loggedInUser = localStorage.getItem("loggedInUser");
+// ===== Logged-in Check =====
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!loggedInUser){ 
     alert("Please login first."); 
     redirect("index.html"); 
 }
 
+// ===== Dummy Products =====
 const products = [
     {id:1,name:"Product A",price:499},
     {id:2,name:"Product B",price:799},
@@ -51,10 +62,20 @@ const products = [
     {id:4,name:"Product D",price:999}
 ];
 
+// ===== Load Checkout Cart =====
 let checkoutCart = JSON.parse(localStorage.getItem("checkoutCart") || "[]");
 const container = document.getElementById("checkoutContainer");
 const totalDiv = document.getElementById("totalAmount");
+const userDiv = document.getElementById("userInfo");
 
+// ===== Display Logged-in User Info =====
+userDiv.innerHTML = `
+    <p><strong>Name:</strong> ${loggedInUser.username}</p>
+    <p><strong>Email:</strong> ${loggedInUser.email}</p>
+    <p><strong>Mobile:</strong> ${loggedInUser.mobile}</p>
+`;
+
+// ===== Load Cart Items =====
 function loadCheckout(){
     container.innerHTML = "";
     let total = 0;
@@ -79,18 +100,34 @@ function loadCheckout(){
     totalDiv.innerHTML = `Total Amount: ₹${total}`;
 }
 
+// ===== Pay Now =====
 function payNow(){
+    if(checkoutCart.length===0){
+        alert("Cart is empty!");
+        redirect("cart.html");
+        return;
+    }
+
     alert("Payment Successful! Order placed.");
-    // Save order
+
+    // ===== Save order =====
     let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-    orders.push(...checkoutCart.map(item=>({ ...item, date:new Date().toLocaleString() })));
+    const orderData = checkoutCart.map(item => ({
+        ...item,
+        date: new Date().toLocaleString(),
+        user: loggedInUser.username
+    }));
+    orders.push(...orderData);
     localStorage.setItem("orders", JSON.stringify(orders));
-    // Clear cart
+
+    // ===== Clear cart =====
     localStorage.removeItem("cart");
     localStorage.removeItem("checkoutCart");
+
     redirect("orders.html");
 }
 
+// Initial load
 loadCheckout();
 </script>
 
