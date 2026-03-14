@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,6 +62,13 @@ width:200px;
 box-shadow:0 3px 6px rgba(0,0,0,0.1);
 cursor:pointer;
 position:relative;
+text-align:center;
+}
+
+.product-card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 .wishlist-btn{
@@ -115,12 +123,36 @@ alert("Please login first");
 redirect("index.html");
 }
 
-// PRODUCTS
+// PRODUCTS WITH IMAGES
 const products=[
-{id:1,name:"Product A",price:499,description:"This is Product A"},
-{id:2,name:"Product B",price:799,description:"This is Product B"},
-{id:3,name:"Product C",price:299,description:"This is Product C"},
-{id:4,name:"Product D",price:999,description:"This is Product D"}
+{
+id:1,
+name:"Product A",
+price:499,
+description:"This is Product A",
+image:"https://via.placeholder.com/200?text=Product+A"
+},
+{
+id:2,
+name:"Product B",
+price:799,
+description:"This is Product B",
+image:"https://via.placeholder.com/200?text=Product+B"
+},
+{
+id:3,
+name:"Product C",
+price:299,
+description:"This is Product C",
+image:"https://via.placeholder.com/200?text=Product+C"
+},
+{
+id:4,
+name:"Product D",
+price:999,
+description:"This is Product D",
+image:"https://via.placeholder.com/200?text=Product+D"
+}
 ];
 
 // WISHLIST STORAGE
@@ -146,6 +178,8 @@ let userWishlist=allWishlists[loggedInUser.username];
 card.innerHTML=`
 
 <div class="wishlist-btn ${userWishlist.includes(p.id)?'active':''}">❤</div>
+
+<img src="${p.image}">
 
 <h3>${p.name}</h3>
 
@@ -214,5 +248,7 @@ card.style.display="none";
 
 </body>
 </html>
+```
+
 
 
