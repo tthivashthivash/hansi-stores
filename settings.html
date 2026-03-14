@@ -10,7 +10,7 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;}
-.settings-card{max-width:550px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+.settings-card{max-width:600px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 .settings-card h2{margin-bottom:20px;color:#333;}
 .settings-card p{margin-bottom:10px;font-size:16px;color:#555;}
 .settings-card label{display:block;margin:10px 0;font-weight:bold;}
@@ -28,6 +28,8 @@ main{padding:20px;}
 .settings-card button:hover{opacity:0.8;}
 .settings-card .secondary-btn{background:skyblue;color:white;}
 hr{border:none;border-top:1px solid #eee;margin:20px 0;}
+.address-list{margin-bottom:15px;}
+.address-list li{padding:5px 10px;background:#f2f2f2;border-radius:8px;margin-bottom:5px;}
 </style>
 </head>
 <body>
@@ -49,7 +51,9 @@ hr{border:none;border-top:1px solid #eee;margin:20px 0;}
         <p><strong>Name:</strong> <span id="userName"></span></p>
         <p><strong>Email:</strong> <span id="userEmail"></span></p>
         <p><strong>Mobile:</strong> <span id="userMobile"></span></p>
-        <p><strong>Address:</strong> <span id="userAddress"></span></p>
+
+        <p><strong>Addresses:</strong></p>
+        <ul id="addressList" class="address-list"></ul>
 
         <hr>
 
@@ -57,11 +61,6 @@ hr{border:none;border-top:1px solid #eee;margin:20px 0;}
         <label for="mobileInput">Change Mobile Number</label>
         <input type="text" id="mobileInput" placeholder="Enter new mobile number">
         <button onclick="changeMobile()">Update Mobile</button>
-
-        <!-- Change Address -->
-        <label for="addressInput">Change Address</label>
-        <input type="text" id="addressInput" placeholder="Enter new address">
-        <button onclick="changeAddress()">Update Address</button>
 
         <!-- Add New Address -->
         <label for="newAddressInput">Add New Address</label>
@@ -111,42 +110,48 @@ if(!loggedInUser){
     redirect("index.html");
 }
 
-// Display user info
+// ===== Display Info =====
 document.getElementById("userName").innerText = loggedInUser.name || "N/A";
 document.getElementById("userEmail").innerText = loggedInUser.email || "N/A";
 document.getElementById("userMobile").innerText = loggedInUser.mobile || "N/A";
-document.getElementById("userAddress").innerText = loggedInUser.address || "N/A";
 
-// ===== Update Mobile =====
+// Show all addresses
+function renderAddresses(){
+    const ul = document.getElementById("addressList");
+    ul.innerHTML = "";
+    const addresses = loggedInUser.addresses || [];
+    if(addresses.length===0){
+        ul.innerHTML = "<li>No addresses added yet.</li>";
+    } else {
+        addresses.forEach(addr=>{
+            const li = document.createElement("li");
+            li.innerText = addr;
+            ul.appendChild(li);
+        });
+    }
+}
+renderAddresses();
+
+// ===== Change Mobile =====
 function changeMobile(){
     const mobile = document.getElementById("mobileInput").value.trim();
     if(mobile===""){ alert("Enter a valid mobile number!"); return; }
     loggedInUser.mobile = mobile;
-    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    saveUser();
     document.getElementById("userMobile").innerText = mobile;
     alert("Mobile number updated!");
     document.getElementById("mobileInput").value = "";
 }
 
-// ===== Update Address =====
-function changeAddress(){
-    const address = document.getElementById("addressInput").value.trim();
-    if(address===""){ alert("Enter a valid address!"); return; }
-    loggedInUser.address = address;
-    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
-    document.getElementById("userAddress").innerText = address;
-    alert("Address updated!");
-    document.getElementById("addressInput").value = "";
-}
-
-// ===== Add New Address =====
+// ===== Add Address =====
 function addAddress(){
     const newAddr = document.getElementById("newAddressInput").value.trim();
     if(newAddr===""){ alert("Enter a valid address!"); return; }
     if(!loggedInUser.addresses) loggedInUser.addresses = [];
     loggedInUser.addresses.push(newAddr);
-    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
-    alert("New address added!");
+    saveUser();
+    renderAddresses();
+    alert("Address added!");
     document.getElementById("newAddressInput").value = "";
 }
 
@@ -157,10 +162,19 @@ function changePassword(){
     if(!current || !newPass){ alert("Fill both password fields!"); return; }
     if(loggedInUser.password && loggedInUser.password!==current){ alert("Current password incorrect!"); return; }
     loggedInUser.password = newPass;
-    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
-    alert("Password updated successfully!");
+    saveUser();
+    alert("Password updated!");
     document.getElementById("currentPass").value = "";
     document.getElementById("newPass").value = "";
+}
+
+// ===== Save User =====
+function saveUser(){
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    // Also update in full users array for future login
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const index = users.findIndex(u=>u.username===loggedInUser.username);
+    if(index!==-1){ users[index]=loggedInUser; localStorage.setItem("users", JSON.stringify(users)); }
 }
 
 // ===== Logout =====
@@ -172,7 +186,7 @@ function confirmLogout(){
     }
 }
 
-// ===== Language Selection =====
+// ===== Language =====
 const langSelect = document.getElementById("language");
 langSelect.value = localStorage.getItem("userLanguage") || "en";
 langSelect.addEventListener("change", ()=>{
