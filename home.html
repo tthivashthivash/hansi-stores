@@ -15,7 +15,11 @@ footer{background:#f1f1f1;text-align:center;padding:20px;}
 footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
 footer span:hover, header .nav-icons span:hover{opacity:0.8;}
 .product-container{display:flex;flex-wrap:wrap;gap:20px;}
-.product-card{border:1px solid #ccc;border-radius:10px;width:200px;padding:10px;text-align:center;}
+.product-card{border:1px solid #ccc;border-radius:10px;width:200px;padding:10px;text-align:center;position:relative;cursor:pointer;}
+.product-card h3{margin:5px 0;}
+.product-card p{margin:5px 0;}
+.product-card .heart{position:absolute;top:10px;right:10px;font-size:20px;color:grey;cursor:pointer;}
+.product-card .heart.active{color:red;}
 .product-card button{padding:8px 12px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;margin-top:5px;}
 .product-card button:hover{opacity:0.8;}
 </style>
@@ -72,19 +76,23 @@ const products = [
 
 // ====== Render Products ======
 const container = document.getElementById("productContainer");
+const wishlistData = JSON.parse(localStorage.getItem("wishlist") || "[]");
 products.forEach(p=>{
     const div = document.createElement("div");
     div.className="product-card";
+    // Check if in wishlist
+    let userWishlist = wishlistData.find(w=>w.username===loggedInUser);
+    let isFav = userWishlist && userWishlist.productIds.includes(p.id);
     div.innerHTML = `
-        <h3>${p.name}</h3>
+        <div class="heart ${isFav?'active':''}" onclick="toggleWishlist(event,${p.id})">❤</div>
+        <h3 onclick="viewProduct(${p.id})">${p.name}</h3>
         <p>₹${p.price}</p>
         <button onclick="addToCart(${p.id})">Add to Cart</button>
-        <button onclick="addToWishlist(${p.id})">Add to Wishlist</button>
     `;
     container.appendChild(div);
 });
 
-// ====== Cart / Wishlist Functions ======
+// ====== Add to Cart ======
 function addToCart(id){
     let cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const exist = cart.find(item=>item.id===id);
@@ -97,18 +105,31 @@ function addToCart(id){
     alert("Added to cart!");
 }
 
-function addToWishlist(id){
+// ====== Toggle Wishlist ======
+function toggleWishlist(e, id){
+    e.stopPropagation(); // prevent parent click
     let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
     let userWishlist = wishlist.find(w=>w.username===loggedInUser);
     if(!userWishlist){
         userWishlist = {username:loggedInUser, productIds:[]};
         wishlist.push(userWishlist);
     }
-    if(!userWishlist.productIds.includes(id)){
+    if(userWishlist.productIds.includes(id)){
+        // remove from wishlist
+        userWishlist.productIds = userWishlist.productIds.filter(pid=>pid!==id);
+        e.target.classList.remove("active");
+    }else{
         userWishlist.productIds.push(id);
+        e.target.classList.add("active");
     }
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    alert("Added to wishlist!");
+}
+
+// ====== Product Detail ======
+function viewProduct(id){
+    // Save product id in localStorage
+    localStorage.setItem("selectedProduct", id);
+    redirect("product.html"); // Redirect to product detail page
 }
 </script>
 
