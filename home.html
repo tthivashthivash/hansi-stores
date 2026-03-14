@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,6 @@
 <title>Hansi Store</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Poppins,sans-serif;
@@ -21,7 +19,6 @@ align-items:center;
 padding:15px 30px;
 background:linear-gradient(135deg,violet,skyblue);
 color:white;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
 .logo{
@@ -51,29 +48,8 @@ padding:15px;
 width:200px;
 box-shadow:0 3px 6px rgba(0,0,0,0.1);
 cursor:pointer;
-transition:0.3s;
 position:relative;
 }
-
-.product-card:hover{
-transform:translateY(-5px);
-}
-
-.product-card h3{
-margin:10px 0;
-}
-
-.product-card p{
-margin:5px 0;
-color:gray;
-}
-
-.product-card span{
-font-weight:bold;
-color:violet;
-}
-
-/* HEART STYLE */
 
 .wishlist-btn{
 position:absolute;
@@ -82,13 +58,11 @@ right:10px;
 font-size:22px;
 color:#bbb;
 cursor:pointer;
-transition:0.3s;
 }
 
 .wishlist-btn.active{
 color:red;
 }
-
 </style>
 </head>
 
@@ -102,13 +76,9 @@ Hansi Store
 
 <div class="nav-icons">
 
-
 <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
-
 <span onclick="redirect('cart.html')">🛒 Cart</span>
-
 <span onclick="redirect('orders.html')">📦 My Orders</span>
-
 <span onclick="redirect('profile.html')">👤 Profile</span>
 
 </div>
@@ -119,12 +89,11 @@ Hansi Store
 
 <script>
 
-// redirect
 function redirect(page){
-window.location.href = page;
+window.location.href=page;
 }
 
-// login user
+// LOGIN USER
 let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
 if(!loggedInUser){
@@ -132,72 +101,61 @@ alert("Please login first");
 redirect("index.html");
 }
 
-// products
+// PRODUCTS
 const products=[
-
-{id:1,name:"Product A",price:499,description:"This is Product A description."},
-
-{id:2,name:"Product B",price:799,description:"This is Product B description."},
-
-{id:3,name:"Product C",price:299,description:"This is Product C description."},
-
-{id:4,name:"Product D",price:999,description:"This is Product D description."}
-
+{id:1,name:"Product A",price:499,description:"This is Product A"},
+{id:2,name:"Product B",price:799,description:"This is Product B"},
+{id:3,name:"Product C",price:299,description:"This is Product C"},
+{id:4,name:"Product D",price:999,description:"This is Product D"}
 ];
 
-// wishlist storage
+// WISHLIST
 let allWishlists = JSON.parse(localStorage.getItem("wishlist") || "{}");
 
 if(!allWishlists[loggedInUser.username]){
-allWishlists[loggedInUser.username] = [];
+allWishlists[loggedInUser.username]=[];
 }
 
 function saveWishlist(){
 localStorage.setItem("wishlist",JSON.stringify(allWishlists));
 }
 
-// load products
 const container=document.getElementById("productsContainer");
 
 products.forEach(p=>{
 
 const card=document.createElement("div");
-
 card.className="product-card";
 
-let userWishlist = allWishlists[loggedInUser.username];
+let userWishlist=allWishlists[loggedInUser.username];
 
 card.innerHTML=`
 
-<div class="wishlist-btn ${userWishlist.includes(p.id) ? 'active':''}">❤</div>
+<div class="wishlist-btn ${userWishlist.includes(p.id)?'active':''}">❤</div>
 
 <h3>${p.name}</h3>
 
-<p>Price: ₹<span>${p.price}</span></p>
-
-<p>${p.description.substring(0,30)}...</p>
+<p>Price: ₹${p.price}</p>
+<p>${p.description}</p>
 
 `;
 
 const heart=card.querySelector(".wishlist-btn");
 
-// toggle wishlist
 heart.onclick=(e)=>{
 
 e.stopPropagation();
 
-let userWishlist = allWishlists[loggedInUser.username];
+let userWishlist=allWishlists[loggedInUser.username];
 
 if(userWishlist.includes(p.id)){
 
-allWishlists[loggedInUser.username] = userWishlist.filter(id=>id!==p.id);
-
+allWishlists[loggedInUser.username]=userWishlist.filter(id=>id!==p.id);
 heart.classList.remove("active");
 
 }else{
 
 userWishlist.push(p.id);
-
 heart.classList.add("active");
 
 }
@@ -206,13 +164,9 @@ saveWishlist();
 
 };
 
-// open product
 card.onclick=()=>{
-
 localStorage.setItem("selectedProduct",p.id);
-
 redirect("product.html");
-
 };
 
 container.appendChild(card);
