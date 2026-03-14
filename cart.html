@@ -12,7 +12,7 @@ header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;max-width:800px;margin:auto;}
 .cart-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:white;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
 .cart-item span{font-weight:bold;}
-.cart-item button{padding:5px 10px;border:none;border-radius:10px;background:violet;color:white;cursor:pointer;transition:0.3s;}
+.cart-item button{padding:5px 10px;border:none;border-radius:10px;background:violet;color:white;cursor:pointer;transition:0.3s;margin-left:5px;}
 .cart-item button:hover{opacity:0.8;}
 .total{margin-top:20px;font-size:20px;text-align:right;font-weight:bold;}
 .checkout-btn{margin-top:15px;padding:10px 20px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;float:right;}
@@ -94,7 +94,7 @@ function changeQty(id, delta){
     const index = cart.findIndex(item=>item.id===id);
     if(index>=0){
         cart[index].quantity += delta;
-        if(cart[index].quantity<=0) cart.splice(index,1);
+        if(cart[index].quantity <= 0) cart.splice(index,1);
         localStorage.setItem("cart", JSON.stringify(cart));
         loadCart();
     }
@@ -107,11 +107,15 @@ function removeItem(id){
 }
 
 function checkout(){
-    if(cart.length===0){ alert("Cart is empty!"); return; }
+    if(cart.length===0){ 
+        alert("Cart is empty!"); 
+        return; 
+    }
     localStorage.setItem("checkoutCart", JSON.stringify(cart));
     redirect("checkout.html");
 }
 
+// Initial load
 loadCart();
 </script>
 
