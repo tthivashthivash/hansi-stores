@@ -17,7 +17,6 @@ padding:20px;
 margin:50px auto;
 width:300px;
 border-radius:10px;
-box-shadow:0 3px 6px rgba(0,0,0,0.1);
 }
 
 input{
@@ -92,7 +91,20 @@ update();
 
 function order(){
 
-alert("Order placed successfully");
+let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+
+orders.push({
+
+name:product.name,
+price:product.price,
+qty:qty.value,
+total:qty.value*product.price
+
+});
+
+localStorage.setItem("orders",JSON.stringify(orders));
+
+alert("Order placed");
 
 window.location.href="orders.html";
 
