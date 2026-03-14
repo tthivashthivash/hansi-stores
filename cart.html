@@ -3,157 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MiniMeesho Cart</title>
+<title>My Cart</title>
 <style>
-/* ====== General Styles ====== */
-body{margin:0;font-family:Arial,sans-serif;}
-header.navbar{display:flex;justify-content: space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
-header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
-header .nav-icons span{margin-left:20px;cursor:pointer;}
-header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
-footer{background:#f1f1f1;text-align:center;padding:20px;}
-footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
-footer span:hover, header .nav-icons span:hover{opacity:0.8;}
-
-/* ====== Cart Styles ====== */
+body{margin:0;font-family:'Poppins',sans-serif;background:#f8f8f8;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+header .logo{font-size:26px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;max-width:800px;margin:auto;}
-.cart-container{display:flex;flex-direction:column;gap:15px;}
-.cart-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #ccc;border-radius:10px;}
-.cart-item img{width:80px;border-radius:5px;}
-.cart-item-details{flex:1;margin-left:15px;}
-.cart-item-details h3{margin:0;font-size:18px;}
-.cart-item-details p{margin:5px 0;font-size:14px;}
-.cart-item-actions button{padding:5px 10px;margin-left:5px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;}
-.cart-item-actions button:hover{opacity:0.8;}
-.cart-summary{margin-top:20px;text-align:right;font-size:18px;font-weight:bold;}
-.cart-summary button{padding:10px 15px;margin-top:10px;border:none;border-radius:5px;background:green;color:white;cursor:pointer;transition:0.3s;}
-.cart-summary button:hover{opacity:0.8;}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:white;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.cart-item span{font-weight:bold;}
+.cart-item button{padding:5px 10px;border:none;border-radius:10px;background:violet;color:white;cursor:pointer;transition:0.3s;}
+.cart-item button:hover{opacity:0.8;}
+.total{margin-top:20px;font-size:20px;text-align:right;font-weight:bold;}
+.checkout-btn{margin-top:15px;padding:10px 20px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;float:right;}
+.checkout-btn:hover{opacity:0.8;}
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header class="navbar">
-    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
-    <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="logo" onclick="redirect('home.html')">Hansi Store</div>
     <div class="nav-icons">
         <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
         <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('orders.html')">📦 My Orders</span>
         <span onclick="redirect('profile.html')">👤 Profile</span>
     </div>
 </header>
 
-<!-- Main Content -->
 <main>
-    <h1 style="text-align:center;">Your Cart</h1>
-    <div class="cart-container" id="cartContainer">
-        <!-- Cart items will be loaded here -->
-    </div>
-    <div class="cart-summary" id="cartSummary">
-        <!-- Total price & Checkout -->
-    </div>
+    <h2>My Cart</h2>
+    <div id="cartContainer"></div>
+    <div class="total" id="totalAmount"></div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
 </main>
 
-<!-- Footer -->
-<footer>
-    <p>MiniMeesho © 2026 | 
-        <span onclick="redirect('about.html')">About</span> | 
-        <span onclick="redirect('contact.html')">Contact</span> | 
-        <span onclick="redirect('terms.html')">Terms</span>
-    </p>
-</footer>
-
 <script>
-// ====== Redirect Function ======
-function redirect(page){
-    window.location.href = page;
+// ===== Redirect =====
+function redirect(page){ window.location.href = page; }
+
+// ===== Logged-in Check =====
+const loggedInUser = localStorage.getItem("loggedInUser");
+if(!loggedInUser){ 
+    alert("Please login first."); 
+    redirect("index.html"); 
 }
 
-// ====== Dummy Products Data (same as Step2/Step3) ======
+// ===== Dummy Products =====
 const products = [
-    {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200x200?text=A",description:"This is Product A"},
-    {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200x200?text=B",description:"This is Product B"},
-    {id:3,name:"Product C",price:299,image:"https://via.placeholder.com/200x200?text=C",description:"This is Product C"},
-    {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200x200?text=D",description:"This is Product D"},
+    {id:1,name:"Product A",price:499},
+    {id:2,name:"Product B",price:799},
+    {id:3,name:"Product C",price:299},
+    {id:4,name:"Product D",price:999}
 ];
 
-// ====== Simulate Cart in LocalStorage ======
-if(!localStorage.getItem("cart")){
-    // Add some dummy products for testing
-    localStorage.setItem("cart", JSON.stringify([
-        {id:1,quantity:1},
-        {id:2,quantity:2}
-    ]));
-}
+// ===== Load Cart =====
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+const container = document.getElementById("cartContainer");
+const totalDiv = document.getElementById("totalAmount");
 
-// ====== Render Cart ======
-function renderCart(){
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const container = document.getElementById("cartContainer");
-    container.innerHTML="";
-    if(cart.length === 0){
-        container.innerHTML="<p>Your cart is empty.</p>";
-        document.getElementById("cartSummary").innerHTML="";
+function loadCart(){
+    container.innerHTML = "";
+    let total = 0;
+    if(cart.length===0){
+        container.innerHTML = "<p>Your cart is empty!</p>";
+        totalDiv.innerHTML = "";
         return;
     }
-
-    let total = 0;
-
     cart.forEach(item=>{
         const product = products.find(p=>p.id===item.id);
         const itemTotal = product.price * item.quantity;
         total += itemTotal;
 
         const div = document.createElement("div");
-        div.className="cart-item";
+        div.className = "cart-item";
         div.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <div class="cart-item-details">
-                <h3>${product.name}</h3>
-                <p>Price: ₹${product.price}</p>
-                <p>Quantity: ${item.quantity}</p>
-            </div>
-            <div class="cart-item-actions">
-                <button onclick="increase(${item.id})">+</button>
-                <button onclick="decrease(${item.id})">-</button>
+            <span>${product.name} (₹${product.price}) x ${item.quantity} = ₹${itemTotal}</span>
+            <div>
+                <button onclick="changeQty(${item.id}, -1)">-</button>
+                <button onclick="changeQty(${item.id}, 1)">+</button>
                 <button onclick="removeItem(${item.id})">Remove</button>
             </div>
         `;
         container.appendChild(div);
     });
-
-    document.getElementById("cartSummary").innerHTML = `
-        Total: ₹${total} <br>
-        <button onclick="checkout()">Proceed to Checkout</button>
-    `;
+    totalDiv.innerHTML = `Total: ₹${total}`;
 }
 
-// ====== Cart Actions ======
-function increase(id){
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    cart.forEach(item=>{if(item.id===id)item.quantity++});
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
+function changeQty(id, delta){
+    const index = cart.findIndex(item=>item.id===id);
+    if(index>=0){
+        cart[index].quantity += delta;
+        if(cart[index].quantity<=0) cart.splice(index,1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
 }
-function decrease(id){
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    cart.forEach(item=>{if(item.id===id && item.quantity>1)item.quantity--});
-    localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-}
+
 function removeItem(id){
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
     cart = cart.filter(item=>item.id!==id);
     localStorage.setItem("cart", JSON.stringify(cart));
-    renderCart();
-}
-function checkout(){
-    alert("Proceeding to checkout...");
-    // Later: redirect to checkout page
+    loadCart();
 }
 
-// ====== Initialize ======
-renderCart();
+function checkout(){
+    if(cart.length===0){ alert("Cart is empty!"); return; }
+    localStorage.setItem("checkoutCart", JSON.stringify(cart));
+    redirect("checkout.html");
+}
+
+loadCart();
 </script>
 
 </body>
