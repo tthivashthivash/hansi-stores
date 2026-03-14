@@ -10,7 +10,7 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;}
-.settings-card{max-width:500px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+.settings-card{max-width:550px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 .settings-card h2{margin-bottom:20px;color:#333;}
 .settings-card p{margin-bottom:10px;font-size:16px;color:#555;}
 .settings-card label{display:block;margin:10px 0;font-weight:bold;}
@@ -62,6 +62,20 @@ hr{border:none;border-top:1px solid #eee;margin:20px 0;}
         <label for="addressInput">Change Address</label>
         <input type="text" id="addressInput" placeholder="Enter new address">
         <button onclick="changeAddress()">Update Address</button>
+
+        <!-- Add New Address -->
+        <label for="newAddressInput">Add New Address</label>
+        <input type="text" id="newAddressInput" placeholder="Enter additional address">
+        <button onclick="addAddress()">Add Address</button>
+
+        <hr>
+
+        <!-- Change Password -->
+        <label for="currentPass">Current Password</label>
+        <input type="password" id="currentPass" placeholder="Enter current password">
+        <label for="newPass">New Password</label>
+        <input type="password" id="newPass" placeholder="Enter new password">
+        <button onclick="changePassword()">Update Password</button>
 
         <hr>
 
@@ -123,6 +137,30 @@ function changeAddress(){
     document.getElementById("userAddress").innerText = address;
     alert("Address updated!");
     document.getElementById("addressInput").value = "";
+}
+
+// ===== Add New Address =====
+function addAddress(){
+    const newAddr = document.getElementById("newAddressInput").value.trim();
+    if(newAddr===""){ alert("Enter a valid address!"); return; }
+    if(!loggedInUser.addresses) loggedInUser.addresses = [];
+    loggedInUser.addresses.push(newAddr);
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    alert("New address added!");
+    document.getElementById("newAddressInput").value = "";
+}
+
+// ===== Change Password =====
+function changePassword(){
+    const current = document.getElementById("currentPass").value.trim();
+    const newPass = document.getElementById("newPass").value.trim();
+    if(!current || !newPass){ alert("Fill both password fields!"); return; }
+    if(loggedInUser.password && loggedInUser.password!==current){ alert("Current password incorrect!"); return; }
+    loggedInUser.password = newPass;
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    alert("Password updated successfully!");
+    document.getElementById("currentPass").value = "";
+    document.getElementById("newPass").value = "";
 }
 
 // ===== Logout =====
