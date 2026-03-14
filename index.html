@@ -21,36 +21,17 @@ body {
     box-shadow:0 4px 10px rgba(0,0,0,0.2);
     width:360px;
 }
-h2 {
-    text-align:center;
-    margin-bottom:20px;
-}
+h2 { text-align:center; margin-bottom:20px; }
 input {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:1px solid #ccc;
-    border-radius:5px;
+    width:100%; padding:10px; margin:10px 0; border:1px solid #ccc; border-radius:5px;
 }
 button {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:none;
-    border-radius:5px;
-    background:violet;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
+    width:100%; padding:10px; margin:10px 0; border:none; border-radius:5px;
+    background:violet; color:white; font-size:16px; cursor:pointer; transition:0.3s;
 }
 button:hover { opacity:0.8; }
 .toggle {
-    color:blue;
-    cursor:pointer;
-    text-align:center;
-    margin-top:10px;
-    text-decoration:underline;
+    color:blue; cursor:pointer; text-align:center; margin-top:10px; text-decoration:underline;
 }
 </style>
 </head>
@@ -67,14 +48,11 @@ button:hover { opacity:0.8; }
 </div>
 
 <script>
-// ===== Redirect =====
 function redirect(page){ window.location.href = page; }
-
-// ===== Validation =====
 function isValidMobile(mobile){ return /^[0-9]{10}$/.test(mobile); }
 function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
 
-// ===== Toggle Login / Signup =====
+// Toggle Login / Signup
 let isLogin = true;
 const formTitle = document.getElementById("formTitle");
 const submitBtn = document.getElementById("submitBtn");
@@ -84,31 +62,20 @@ const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 
-// ===== Toggle Display for Email (optional) =====
-function updateForm(){
+toggleForm.addEventListener("click", ()=>{
+    isLogin = !isLogin;
     if(isLogin){
         formTitle.innerText = "Login";
         submitBtn.innerText = "Login";
         toggleForm.innerText = "Don't have an account? Signup";
-        // For login, email can be optional if you want
-        mobileInput.style.display = "block";
-        emailInput.style.display = "block";
-    }else{
+    } else {
         formTitle.innerText = "Signup";
         submitBtn.innerText = "Signup";
         toggleForm.innerText = "Already have an account? Login";
-        mobileInput.style.display = "block";
-        emailInput.style.display = "block";
     }
-}
-updateForm();
-
-toggleForm.addEventListener("click", ()=>{
-    isLogin = !isLogin;
-    updateForm();
 });
 
-// ===== Submit Login / Signup =====
+// Submit Login / Signup
 submitBtn.addEventListener("click", ()=>{
     const mobile = mobileInput.value.trim();
     const username = usernameInput.value.trim();
@@ -123,35 +90,24 @@ submitBtn.addEventListener("click", ()=>{
     let users = JSON.parse(localStorage.getItem("users") || "[]");
 
     if(isLogin){
-        // LOGIN
-        const user = users.find(u => 
-            u.username === username && 
-            u.password === password && 
-            u.email === email && 
+        const user = users.find(u =>
+            u.username === username &&
+            u.password === password &&
+            u.email === email &&
             u.mobile === mobile
         );
         if(user){
-            localStorage.setItem("loggedInUser", JSON.stringify(user)); // full user save
+            localStorage.setItem("loggedInUser", JSON.stringify(user));
             alert("Login Successful! Redirecting to Home...");
             setTimeout(()=>{ redirect("home.html"); }, 100);
-        }else{
+        } else {
             alert("Invalid credentials! Check all fields.");
         }
-    }else{
-        // SIGNUP
-        if(!isValidMobile(mobile)){
-            alert("Enter a valid 10-digit mobile number!");
-            return;
-        }
-        if(!isValidEmail(email)){
-            alert("Enter a valid email!");
-            return;
-        }
+    } else {
+        if(!isValidMobile(mobile)){ alert("Enter a valid 10-digit mobile number!"); return; }
+        if(!isValidEmail(email)){ alert("Enter a valid email!"); return; }
         const exist = users.find(u => u.username === username || u.email === email || u.mobile === mobile);
-        if(exist){
-            alert("User with same username, email, or mobile already exists!");
-            return;
-        }
+        if(exist){ alert("User already exists!"); return; }
         const newUser = {mobile, username, email, password};
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
