@@ -33,7 +33,7 @@ button.logout:hover{opacity:0.8;}
         <h2>Profile</h2>
         <p><strong>Username:</strong> <span id="userName"></span></p>
         <p><strong>Email:</strong> <span id="userEmail"></span></p>
-        <button class="logout" onclick="logout()">Logout</button>
+        <button class="logout" onclick="confirmLogout()">Logout</button>
     </div>
 </main>
 
@@ -43,17 +43,26 @@ function redirect(page){ window.location.href = page; }
 
 // ===== Logged-in Check =====
 const loggedInUser = localStorage.getItem("loggedInUser");
-if(!loggedInUser){ alert("Please login first."); redirect("index.html"); }
-else{ document.getElementById("userName").innerText = loggedInUser; }
+if(!loggedInUser){ 
+    alert("Please login first."); 
+    redirect("index.html"); 
+} else { 
+    document.getElementById("userName").innerText = loggedInUser; 
+    // Fetch real email if stored
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const user = users.find(u => u.username === loggedInUser);
+    if(user && user.email) document.getElementById("userEmail").innerText = user.email;
+    else document.getElementById("userEmail").innerText = loggedInUser+"@hansistore.com";
+}
 
-// ===== Dummy Email (optional) =====
-document.getElementById("userEmail").innerText = loggedInUser+"@hansistore.com";
-
-// ===== Logout =====
-function logout(){
-    localStorage.removeItem("loggedInUser");
-    alert("Logged out successfully!");
-    redirect("index.html");
+// ===== Confirm Logout =====
+function confirmLogout(){
+    const yes = confirm("Are you sure you want to logout?");
+    if(yes){
+        localStorage.removeItem("loggedInUser");
+        alert("Logged out successfully!");
+        redirect("index.html");
+    }
 }
 </script>
 
