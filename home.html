@@ -13,7 +13,9 @@ main{padding:20px;}
 .product-detail{max-width:500px;margin:30px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 .product-detail h2{margin-bottom:10px;}
 .product-detail p{margin:10px 0;font-size:18px;}
-.product-detail button{padding:10px 15px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;transition:0.3s;}
+.product-detail button{
+    padding:10px 15px;border:none;border-radius:20px;background:violet;color:white;cursor:pointer;font-size:16px;transition:0.3s;margin-right:10px;
+}
 .product-detail button:hover{opacity:0.8;}
 </style>
 </head>
@@ -41,9 +43,12 @@ function redirect(page){ window.location.href = page; }
 
 // ===== Logged-in Check =====
 const loggedInUser = localStorage.getItem("loggedInUser");
-if(!loggedInUser){ alert("Please login first."); redirect("index.html"); }
+if(!loggedInUser){ 
+    alert("Please login first."); 
+    redirect("index.html"); 
+}
 
-// ===== Dummy Products (same as home page) =====
+// ===== Dummy Products =====
 const products = [
     {id:1,name:"Product A",price:499, description:"This is Product A description."},
     {id:2,name:"Product B",price:799, description:"This is Product B description."},
@@ -63,6 +68,7 @@ if(product){
         <p>Price: ₹${product.price}</p>
         <p>${product.description}</p>
         <button onclick="addToCart(${product.id})">Add to Cart</button>
+        <button onclick="buyNow(${product.id})">Buy Now</button>
     `;
 }else{
     detailDiv.innerHTML = "<p>Product not found!</p>";
@@ -76,6 +82,14 @@ function addToCart(id){
     else{ cart.push({id, quantity:1}); }
     localStorage.setItem("cart", JSON.stringify(cart));
     alert("Added to cart!");
+}
+
+// ===== Buy Now =====
+function buyNow(id){
+    // Save selected product for checkout
+    localStorage.setItem("selectedProduct", id);
+    // Redirect to checkout page
+    redirect("checkout.html");
 }
 </script>
 
