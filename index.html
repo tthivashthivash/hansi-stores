@@ -21,39 +21,11 @@ body {
     box-shadow:0 4px 10px rgba(0,0,0,0.2);
     width:360px;
 }
-h2 {
-    text-align:center;
-    margin-bottom:20px;
-}
-input {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:1px solid #ccc;
-    border-radius:5px;
-}
-button {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:none;
-    border-radius:5px;
-    background:violet;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
-}
-button:hover {
-    opacity:0.8;
-}
-.toggle {
-    color:blue;
-    cursor:pointer;
-    text-align:center;
-    margin-top:10px;
-    text-decoration:underline;
-}
+h2 {text-align:center;margin-bottom:20px;}
+input {width:100%;padding:10px;margin:10px 0;border:1px solid #ccc;border-radius:5px;}
+button {width:100%;padding:10px;margin:10px 0;border:none;border-radius:5px;background:violet;color:white;font-size:16px;cursor:pointer;transition:0.3s;}
+button:hover {opacity:0.8;}
+.toggle {color:blue;cursor:pointer;text-align:center;margin-top:10px;text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -70,9 +42,7 @@ button:hover {
 
 <script>
 // ===== Redirect =====
-function redirect(page){
-    window.location.href = page;
-}
+function redirect(page){ window.location.href = page; }
 
 // ===== Toggle Login / Signup =====
 let isLogin = true;
@@ -84,28 +54,37 @@ const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 
-// Default: hide mobile & email for login
+// Hide mobile/email on login
 mobileInput.style.display = "none";
 emailInput.style.display = "none";
 
+// Toggle
 toggleForm.addEventListener("click", ()=>{
     isLogin = !isLogin;
     if(isLogin){
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
-        mobileInput.style.display="none";
-        emailInput.style.display="none";
+        mobileInput.style.display = "none";
+        emailInput.style.display = "none";
     }else{
         formTitle.innerText="Signup";
         submitBtn.innerText="Signup";
         toggleForm.innerText="Already have an account? Login";
-        mobileInput.style.display="block";
-        emailInput.style.display="block";
+        mobileInput.style.display = "block";
+        emailInput.style.display = "block";
     }
 });
 
-// ===== Submit Login / Signup =====
+// ===== Helper Functions =====
+function isValidMobile(mobile){
+    return /^[0-9]{10}$/.test(mobile);
+}
+function isValidEmail(email){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// ===== Submit =====
 submitBtn.addEventListener("click", ()=>{
     const mobile = mobileInput.value.trim();
     const username = usernameInput.value.trim();
@@ -128,9 +107,17 @@ submitBtn.addEventListener("click", ()=>{
             alert("Invalid credentials!");
         }
     }else{
-        // Signup
+        // Signup validations
         if(mobile==="" || username==="" || email==="" || password===""){
             alert("All fields are required!");
+            return;
+        }
+        if(!isValidMobile(mobile)){
+            alert("Enter a valid 10-digit mobile number!");
+            return;
+        }
+        if(!isValidEmail(email)){
+            alert("Enter a valid email!");
             return;
         }
         const exist = users.find(u=>u.username===username);
@@ -140,18 +127,10 @@ submitBtn.addEventListener("click", ()=>{
         }
         users.push({mobile, username, email, password});
         localStorage.setItem("users", JSON.stringify(users));
-        alert("Signup Successful! Please login.");
-        // Switch to login view
-        isLogin = true;
-        formTitle.innerText="Login";
-        submitBtn.innerText="Login";
-        toggleForm.innerText="Don't have an account? Signup";
-        mobileInput.style.display = "none";
-        emailInput.style.display = "none";
-        mobileInput.value="";
-        emailInput.value="";
-        usernameInput.value="";
-        passwordInput.value="";
+        // Auto login after signup
+        localStorage.setItem("loggedInUser", username);
+        alert("Signup Successful! Redirecting to Home...");
+        redirect("home.html");
     }
 });
 </script>
