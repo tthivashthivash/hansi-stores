@@ -44,9 +44,7 @@ button {
     cursor:pointer;
     transition:0.3s;
 }
-button:hover {
-    opacity:0.8;
-}
+button:hover { opacity:0.8; }
 .toggle {
     color:blue;
     cursor:pointer;
@@ -92,14 +90,10 @@ toggleForm.addEventListener("click", ()=>{
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
-        mobileInput.style.display="block";
-        emailInput.style.display="block";
     }else{
         formTitle.innerText="Signup";
         submitBtn.innerText="Signup";
         toggleForm.innerText="Already have an account? Login";
-        mobileInput.style.display="block";
-        emailInput.style.display="block";
     }
 });
 
@@ -124,7 +118,7 @@ submitBtn.addEventListener("click", ()=>{
             alert("Login Successful!");
             redirect("profile.html");
         }else{
-            alert("Invalid credentials! Check mobile, email, username, or password.");
+            alert("Invalid credentials! Check all fields.");
         }
     }else{
         // SIGNUP
