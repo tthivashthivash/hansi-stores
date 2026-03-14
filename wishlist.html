@@ -4,137 +4,281 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MiniMeesho Wishlist</title>
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#f8f8f8;}
-header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
-header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
-header .nav-icons span{margin-left:20px;cursor:pointer;}
-header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
-footer{background:#f1f1f1;text-align:center;padding:20px;}
-footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
-footer span:hover, header .nav-icons span:hover{opacity:0.8;}
 
-/* Wishlist Styles */
-main{padding:20px;max-width:900px;margin:auto;}
-.wishlist-container{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
-.wishlist-item{border:1px solid #ccc;border-radius:10px;width:200px;text-align:center;padding:10px;background:white;transition:0.3s;position:relative;}
-.wishlist-item img{width:100%;border-radius:10px;cursor:pointer;}
-.wishlist-item h3{margin:10px 0 5px 0;}
-.wishlist-item p{margin:5px 0;color:gray;}
-.wishlist-item button{padding:8px 12px;margin:5px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;}
-.wishlist-item button:hover{opacity:0.8;}
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f8f8f8;
+}
+
+header.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:linear-gradient(135deg,violet,skyblue);
+color:white;
+}
+
+header .logo{
+font-size:24px;
+font-weight:bold;
+cursor:pointer;
+}
+
+header .nav-icons span{
+margin-left:20px;
+cursor:pointer;
+font-weight:bold;
+}
+
+header .search-bar{
+padding:5px 10px;
+border-radius:5px;
+border:none;
+}
+
+footer{
+background:#f1f1f1;
+text-align:center;
+padding:20px;
+}
+
+footer span{
+cursor:pointer;
+color:blue;
+text-decoration:underline;
+margin:0 5px;
+}
+
+footer span:hover,
+header .nav-icons span:hover{
+opacity:0.8;
+}
+
+/* Wishlist */
+
+main{
+padding:20px;
+max-width:900px;
+margin:auto;
+}
+
+.wishlist-container{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+justify-content:center;
+}
+
+.wishlist-item{
+border:1px solid #ccc;
+border-radius:10px;
+width:200px;
+text-align:center;
+padding:10px;
+background:white;
+transition:0.3s;
+}
+
+.wishlist-item img{
+width:100%;
+border-radius:10px;
+cursor:pointer;
+}
+
+.wishlist-item h3{
+margin:10px 0 5px 0;
+}
+
+.wishlist-item p{
+margin:5px 0;
+color:gray;
+}
+
+.wishlist-item button{
+padding:8px 12px;
+margin:5px;
+border:none;
+border-radius:5px;
+background:violet;
+color:white;
+cursor:pointer;
+}
+
+.wishlist-item button:hover{
+opacity:0.8;
+}
+
 </style>
 </head>
+
 <body>
 
-<!-- Header -->
+<!-- HEADER -->
 <header class="navbar">
-    <div class="logo" onclick="redirect('home.html')">MiniMeesho</div>
-    <input type="text" placeholder="Search products..." class="search-bar">
-    <div class="nav-icons">
-        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
-        <span onclick="redirect('cart.html')">🛒 Cart</span>
-        <span onclick="redirect('profile.html')">👤 Profile</span>
-    </div>
+
+<div class="logo" onclick="redirect('home.html')">
+MiniMeesho
+</div>
+
+<input type="text" placeholder="Search products..." class="search-bar">
+
+<div class="nav-icons">
+
+<span onclick="redirect('home.html')">🏠 Home</span>
+
+<span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+
+<span onclick="redirect('cart.html')">🛒 Cart</span>
+
+<span onclick="redirect('profile.html')">👤 Profile</span>
+
+</div>
+
 </header>
 
-<!-- Main Content -->
+<!-- MAIN -->
 <main>
-    <h1 style="text-align:center;">Your Wishlist</h1>
-    <div class="wishlist-container" id="wishlistContainer">
-        <!-- Wishlist items will load here -->
-    </div>
+
+<h1 style="text-align:center;">Your Wishlist</h1>
+
+<div class="wishlist-container" id="wishlistContainer"></div>
+
 </main>
 
-<!-- Footer -->
+<!-- FOOTER -->
 <footer>
-    <p>MiniMeesho © 2026 | 
-        <span onclick="redirect('about.html')">About</span> | 
-        <span onclick="redirect('contact.html')">Contact</span> | 
-        <span onclick="redirect('terms.html')">Terms</span>
-    </p>
+
+<p>MiniMeesho © 2026 | 
+<span onclick="redirect('about.html')">About</span> | 
+<span onclick="redirect('contact.html')">Contact</span> | 
+<span onclick="redirect('terms.html')">Terms</span>
+</p>
+
 </footer>
 
 <script>
-// ===== Redirect =====
-function redirect(page){ window.location.href = page; }
 
-// ===== Dummy Products Data =====
+// redirect
+function redirect(page){
+window.location.href = page;
+}
+
+// products
 const products = [
-    {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200x200?text=A"},
-    {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200x200?text=B"},
-    {id:3,name:"Product C",price:299,image:"https://via.placeholder.com/200x200?text=C"},
-    {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200x200?text=D"},
+
+{id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200x200?text=A"},
+
+{id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200x200?text=B"},
+
+{id:3,name:"Product C",price:299,image:"https://via.placeholder.com/200x200?text=C"},
+
+{id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200x200?text=D"}
+
 ];
 
-// ===== Logged-in User =====
+// login user
 let loggedInUser = localStorage.getItem("loggedInUser");
-if(loggedInUser){
-    // If stored as object string, parse it
-    try{ loggedInUser = JSON.parse(loggedInUser).username || loggedInUser; }catch(e){}
-} else {
-    alert("Please login to view wishlist.");
-    redirect("index.html");
+
+if(!loggedInUser){
+
+alert("Please login first");
+
+redirect("index.html");
+
 }
 
-// ===== Initialize Wishlist for user if not exists =====
-if(!localStorage.getItem("wishlist")){
-    localStorage.setItem("wishlist", JSON.stringify([]));
+loggedInUser = JSON.parse(loggedInUser).username;
+
+
+// wishlist storage
+let allWishlist = JSON.parse(localStorage.getItem("wishlist") || "{}");
+
+if(!allWishlist[loggedInUser]){
+
+allWishlist[loggedInUser] = [];
+
 }
 
-// ===== Render Wishlist =====
+const container = document.getElementById("wishlistContainer");
+
+
+// render
 function renderWishlist(){
-    const allWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    let userWishlist = allWishlist.find(w => w.username === loggedInUser);
-    
-    // If user has no wishlist yet, initialize
-    if(!userWishlist){
-        userWishlist = {username:loggedInUser, productIds:[]};
-        allWishlist.push(userWishlist);
-        localStorage.setItem("wishlist", JSON.stringify(allWishlist));
-    }
 
-    const container = document.getElementById("wishlistContainer");
-    container.innerHTML = "";
+container.innerHTML="";
 
-    if(userWishlist.productIds.length===0){
-        container.innerHTML="<p>Your wishlist is empty.</p>";
-        return;
-    }
+let userWishlist = allWishlist[loggedInUser];
 
-    userWishlist.productIds.forEach(pid=>{
-        const product = products.find(p => p.id === pid);
-        if(!product) return;
-        const div = document.createElement("div");
-        div.className = "wishlist-item";
-        div.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" onclick="viewProduct(${product.id})">
-            <h3>${product.name}</h3>
-            <p>₹${product.price}</p>
-            <button onclick="removeFromWishlist(${product.id})">Remove</button>
-        `;
-        container.appendChild(div);
-    });
+if(userWishlist.length===0){
+
+container.innerHTML="<p>Your wishlist is empty</p>";
+
+return;
+
 }
 
-// ===== Actions =====
+userWishlist.forEach(pid=>{
+
+const product = products.find(p=>p.id===pid);
+
+if(!product) return;
+
+const div=document.createElement("div");
+
+div.className="wishlist-item";
+
+div.innerHTML=`
+
+<img src="${product.image}" onclick="viewProduct(${product.id})">
+
+<h3>${product.name}</h3>
+
+<p>₹${product.price}</p>
+
+<button onclick="removeFromWishlist(${product.id})">
+Remove
+</button>
+
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+
+// view product
 function viewProduct(id){
-    localStorage.setItem("selectedProduct", id);
-    redirect("product.html");
+
+localStorage.setItem("selectedProduct",id);
+
+redirect("product.html");
+
 }
 
+
+// remove
 function removeFromWishlist(id){
-    const allWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    const userWishlist = allWishlist.find(w => w.username === loggedInUser);
-    if(userWishlist){
-        userWishlist.productIds = userWishlist.productIds.filter(pid=>pid!==id);
-        localStorage.setItem("wishlist", JSON.stringify(allWishlist));
-        renderWishlist();
-    }
+
+let userWishlist = allWishlist[loggedInUser];
+
+allWishlist[loggedInUser] = userWishlist.filter(pid=>pid!==id);
+
+localStorage.setItem("wishlist",JSON.stringify(allWishlist));
+
+renderWishlist();
+
 }
 
-// ===== Initialize =====
+
+// load
 renderWishlist();
+
 </script>
 
 </body>
