@@ -10,7 +10,9 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;}
 main{padding:20px;}
-button{padding:10px 15px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;}
+.profile-info{border:1px solid #ccc;border-radius:10px;padding:20px;max-width:400px;}
+.profile-info h2{margin-top:0;}
+button{padding:10px 15px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;margin-top:15px;transition:0.3s;}
 button:hover{opacity:0.8;}
 </style>
 </head>
@@ -27,11 +29,14 @@ button:hover{opacity:0.8;}
 
 <main>
     <h1>Profile</h1>
-    <p>Username: <span id="usernameDisplay"></span></p>
+    <div class="profile-info" id="profileInfo">
+        <!-- User data will load here -->
+    </div>
     <button onclick="logout()">Logout</button>
 </main>
 
 <script>
+// ====== Redirect ======
 function redirect(page){ window.location.href = page; }
 
 // ====== Check Logged-in ======
@@ -39,9 +44,22 @@ const loggedInUser = localStorage.getItem("loggedInUser");
 if(!loggedInUser){
     alert("Please login first.");
     redirect("index.html");
-}else{
-    document.getElementById("usernameDisplay").innerText = loggedInUser;
 }
+
+// ====== Get User Data ======
+const users = JSON.parse(localStorage.getItem("users") || "[]");
+const userOrders = JSON.parse(localStorage.getItem("orders") || []).filter(o=>o.username===loggedInUser);
+const cart = JSON.parse(localStorage.getItem("cart") || []).filter(c=>c.username===loggedInUser || true);
+const wishlistData = JSON.parse(localStorage.getItem("wishlist") || []);
+const userWishlist = wishlistData.find(w=>w.username===loggedInUser);
+
+const profileDiv = document.getElementById("profileInfo");
+profileDiv.innerHTML = `
+    <h2>${loggedInUser}</h2>
+    <p>Total Orders Placed: ${userOrders.length}</p>
+    <p>Items in Cart: ${cart.reduce((sum,item)=>sum+item.quantity,0)}</p>
+    <p>Wishlist Items: ${userWishlist ? userWishlist.productIds.length : 0}</p>
+`;
 
 // ====== Logout ======
 function logout(){
