@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,10 +11,10 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;}
-.profile-card{max-width:400px;margin:40px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
-.profile-card h2{margin-bottom:15px;color:#333;}
-.profile-card p{margin-bottom:10px;color:#555;}
-button.logout, button.settings{
+.profile-card{max-width:400px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+.profile-card h2{margin-bottom:20px;color:#333;}
+.profile-card p{margin-bottom:10px;color:#555;font-size:16px;}
+button.logout, button.settings, button.contact{
     padding:10px 15px;
     border:none;
     border-radius:20px;
@@ -23,8 +24,9 @@ button.logout, button.settings{
     transition:0.3s;
     margin-right:10px;
 }
-button.logout:hover, button.settings:hover{opacity:0.8;}
+button.logout:hover, button.settings:hover, button.contact:hover{opacity:0.8;}
 button.settings{background:skyblue;}
+button.contact{background:orange;}
 </style>
 </head>
 <body>
@@ -41,9 +43,13 @@ button.settings{background:skyblue;}
 <main>
     <div class="profile-card">
         <h2>Profile</h2>
-        <p><strong>Username:</strong> <span id="userName"></span></p>
+        <p><strong>Name:</strong> <span id="userName"></span></p>
         <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <p><strong>Mobile:</strong> <span id="userMobile"></span></p>
+        <p><strong>Address:</strong> <span id="userAddress"></span></p>
+
         <button class="settings" onclick="redirect('settings.html')">Settings</button>
+        <button class="contact" onclick="redirect('contact.html')">Contact Support</button>
         <button class="logout" onclick="confirmLogout()">Logout</button>
     </div>
 </main>
@@ -53,16 +59,15 @@ button.settings{background:skyblue;}
 function redirect(page){ window.location.href = page; }
 
 // ===== Logged-in Check =====
-const loggedInUser = localStorage.getItem("loggedInUser");
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!loggedInUser){ 
     alert("Please login first."); 
     redirect("index.html"); 
 } else { 
-    document.getElementById("userName").innerText = loggedInUser; 
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const user = users.find(u => u.username === loggedInUser);
-    if(user && user.email) document.getElementById("userEmail").innerText = user.email;
-    else document.getElementById("userEmail").innerText = loggedInUser+"@hansistore.com";
+    document.getElementById("userName").innerText = loggedInUser.name || "N/A";
+    document.getElementById("userEmail").innerText = loggedInUser.email || "N/A";
+    document.getElementById("userMobile").innerText = loggedInUser.mobile || "N/A";
+    document.getElementById("userAddress").innerText = loggedInUser.address || "N/A";
 }
 
 // ===== Confirm Logout =====
