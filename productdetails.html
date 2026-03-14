@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;}
+main{padding:20px;}
+.product-detail{display:flex;gap:30px;flex-wrap:wrap;}
+.product-info{max-width:400px;}
+.product-info h2{margin-bottom:10px;}
+.product-info p{margin:5px 0;}
+.quantity{margin:10px 0;}
+button{padding:10px 15px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;margin-right:10px;transition:0.3s;}
+button:hover{opacity:0.8;}
+.heart{font-size:25px;color:grey;cursor:pointer;}
+.heart.active{color:red;}
+.related-container{display:flex;flex-wrap:wrap;gap:20px;margin-top:40px;}
+.related-card{border:1px solid #ccc;border-radius:10px;padding:10px;width:150px;text-align:center;cursor:pointer;}
+.related-card button{padding:5px 10px;margin-top:5px;}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo" onclick="redirect('home.html')">MiniMeesho</div>
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
+</header>
+
+<main>
+    <div class="product-detail" id="productDetail">
+        <!-- Product details will load here -->
+    </div>
+
+    <h3>Related Products</h3>
+    <div class="related-container" id="relatedContainer">
+        <!-- Related products will load here -->
+    </div>
+</main>
+
+<script>
+// ====== Redirect ======
+function redirect(page){
+    window.location.href = page;
+}
+
+// ====== Check Logged-in ======
+const loggedInUser = localStorage.getItem("loggedInUser");
+if(!loggedInUser){
+    alert("Please login first.");
+    redirect("index.html");
+}
+
+// ====== Products List ======
+const products = [
+    {id:1,name:"Product A",price:499,desc:"Description of Product A"},
+    {id:2,name:"Product B",price:799,desc:"Description of Product B"},
+    {id:3,name:"Product C",price:299,desc:"Description of Product C"},
+    {id:4,name:"Product D",price:999,desc:"Description of Product D"}
+];
+
+// ====== Get Selected Product ======
+const selectedId = parseInt(localStorage.getItem("selectedProduct"));
+const selectedProduct = products.find(p=>p.id===selectedId);
+
+// ====== Wishlist Data ======
+let wishlistData = JSON.parse(localStorage.getItem("wishlist") || "[]");
+let userWishlist = wishlistData.find(w=>w.username===loggedInUser);
+if(!userWishlist){
+    userWishlist = {username:loggedInUser, productIds:[]};
+    wishlistData.push(userWishlist);
+}
+
+// ====== Render Product Detail ======
+const productDetail = document.getElementById("productDetail");
+productDetail.innerHTML = `
+    <div class="product-info">
+        <h2>${selectedProduct.name} <span class="heart ${userWishlist.productIds.includes(selectedProduct.id)?'active':''}" id="heartIcon">❤</span></h2>
+        <p>${selectedProduct.desc}</p>
+        <p>Price: ₹${selectedProduct.price}</p>
+        <div class="quantity">
+            Quantity: <input type="number" id="qty" value="1" min="1" style="width:50px;">
+        </div>
+        <button onclick="addToCart()">Add to Cart</button>
+        <button onclick="buyNow()">Buy Now</button>
+    </div>
+`;
+
+// ====== Heart Wishlist Toggle ======
+document.getElementById("heartIcon").addEventListener("click",(e)=>{
+    const heart = e.target;
+    if(userWishlist.productIds.includes(selectedProduct.id)){
+        userWishlist.productIds = userWishlist.productIds.filter(pid=>pid!==selectedProduct.id);
+        heart.classList.remove("active");
+    }else{
+        userWishlist.productIds.push(selectedProduct.id);
+        heart.classList.add("active");
+    }
+    localStorage.setItem("wishlist", JSON.stringify(wishlistData));
+});
+
+// ====== Add to Cart ======
+function addToCart(){
+    const qty = parseInt(document.getElementById("qty").value);
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const exist = cart.find(item=>item.id===selectedProduct.id);
+    if(exist){
+        exist.quantity += qty;
+    }else{
+        cart.push({id:selectedProduct.id, quantity:qty});
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to Cart!");
+}
+
+// ====== Buy Now ======
+function buyNow(){
+    addToCart(); // add current product to cart
+    redirect("cart.html"); // redirect to cart
+}
+
+// ====== Related Products ======
+const relatedContainer = document.getElementById("relatedContainer");
+products.filter(p=>p.id!==selectedProduct.id).forEach(p=>{
+    const div = document.createElement("div");
+    div.className="related-card";
+    div.innerHTML = `
+        <h4 onclick="viewProduct(${p.id})">${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button onclick="addToCartRelated(event,${p.id})">Add to Cart</button>
+        <button class="heart ${userWishlist.productIds.includes(p.id)?'active':''}" onclick="toggleWishlistRelated(event,${p.id})">❤</button>
+    `;
+    relatedContainer.appendChild(div);
+});
+
+// ====== Related Add to Cart ======
+function addToCartRelated(e,id){
+    e.stopPropagation();
+    const qty = 1;
+    const product = products.find(p=>p.id===id);
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const exist = cart.find(item=>item.id===id);
+    if(exist){
+        exist.quantity += qty;
+    }else{
+        cart.push({id:id, quantity:qty});
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to Cart!");
+}
+
+// ====== Related Wishlist Toggle ======
+function toggleWishlistRelated(e,id){
+    e.stopPropagation();
+    const heart = e.target;
+    if(userWishlist.productIds.includes(id)){
+        userWishlist.productIds = userWishlist.productIds.filter(pid=>pid!==id);
+        heart.classList.remove("active");
+    }else{
+        userWishlist.productIds.push(id);
+        heart.classList.add("active");
+    }
+    localStorage.setItem("wishlist", JSON.stringify(wishlistData));
+}
+
+// ====== Related Product Click ======
+function viewProduct(id){
+    localStorage.setItem("selectedProduct", id);
+    redirect("product.html");
+}
+</script>
+
+</body>
+</html>
