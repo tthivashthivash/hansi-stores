@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
+<title>Checkout - Hansi Store</title>
 <style>
 body{margin:0;font-family:'Poppins',sans-serif;background:#f8f8f8;}
 header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;box-shadow:0 3px 8px rgba(0,0,0,0.1);}
@@ -48,10 +48,12 @@ main{padding:20px;max-width:600px;margin:auto;}
 function redirect(page){ window.location.href = page; }
 
 // ===== Logged-in Check =====
-const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!loggedInUser){ 
-    alert("Please login first."); 
-    redirect("index.html"); 
+let loggedInUser = localStorage.getItem("loggedInUser");
+if(!loggedInUser){
+    alert("Please login first.");
+    redirect("index.html");
+} else {
+    try{ loggedInUser = JSON.parse(loggedInUser); } catch(e){}
 }
 
 // ===== Dummy Products =====
@@ -62,13 +64,19 @@ const products = [
     {id:4,name:"Product D",price:999}
 ];
 
-// ===== Load Checkout Cart =====
+// ===== Load Checkout Cart for Logged-in User =====
+let allCarts = JSON.parse(localStorage.getItem("cart") || "{}");
 let checkoutCart = JSON.parse(localStorage.getItem("checkoutCart") || "[]");
+if(!checkoutCart.length && loggedInUser){
+    // fallback: load from user's cart if checkoutCart is empty
+    checkoutCart = allCarts[loggedInUser.username] || [];
+}
+
 const container = document.getElementById("checkoutContainer");
 const totalDiv = document.getElementById("totalAmount");
 const userDiv = document.getElementById("userInfo");
 
-// ===== Display Logged-in User Info =====
+// ===== Display User Info =====
 userDiv.innerHTML = `
     <p><strong>Name:</strong> ${loggedInUser.username}</p>
     <p><strong>Email:</strong> ${loggedInUser.email}</p>
@@ -110,7 +118,7 @@ function payNow(){
 
     alert("Payment Successful! Order placed.");
 
-    // ===== Save order =====
+    // ===== Save Orders =====
     let orders = JSON.parse(localStorage.getItem("orders") || "[]");
     const orderData = checkoutCart.map(item => ({
         ...item,
@@ -120,10 +128,12 @@ function payNow(){
     orders.push(...orderData);
     localStorage.setItem("orders", JSON.stringify(orders));
 
-    // ===== Clear cart =====
-    localStorage.removeItem("cart");
+    // ===== Clear user's cart =====
+    allCarts[loggedInUser.username] = [];
+    localStorage.setItem("cart", JSON.stringify(allCarts));
     localStorage.removeItem("checkoutCart");
 
+    // Redirect to Orders page
     redirect("orders.html");
 }
 
