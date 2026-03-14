@@ -15,7 +15,7 @@ main{padding:20px;display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
 .product-card h3{margin:10px 0;}
 .product-card p{margin:5px 0;color:gray;}
 .product-card span{font-weight:bold;color:violet;}
-.wishlist-btn{position:absolute;top:10px;right:10px;font-size:20px;color:gray;cursor:pointer;transition:0.3s;}
+.wishlist-btn{position:absolute;top:10px;right:10px;font-size:22px;color:gray;cursor:pointer;transition:0.3s;}
 .wishlist-btn.active{color:red;}
 </style>
 </head>
@@ -47,15 +47,17 @@ const products = [
     {id:4,name:"Product D",price:999, description:"This is Product D description."}
 ];
 
+// ===== Wishlist Setup =====
+let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+
+function saveWishlist(){ 
+    localStorage.setItem("wishlist", JSON.stringify(wishlist)); 
+}
+
 // ===== Load Product Cards =====
 const container = document.getElementById("productsContainer");
 
-// Load existing wishlist
-let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-function saveWishlist(){ localStorage.setItem("wishlist", JSON.stringify(wishlist)); }
-
-products.forEach(p=>{
+products.forEach(p => {
     const card = document.createElement("div");
     card.className = "product-card";
     card.innerHTML = `
@@ -64,13 +66,14 @@ products.forEach(p=>{
         <p>Price: ₹<span>${p.price}</span></p>
         <p>${p.description.substring(0,30)}...</p>
     `;
+
     const wishlistBtn = card.querySelector(".wishlist-btn");
 
-    // Wishlist toggle
-    wishlistBtn.addEventListener("click", (e)=>{
-        e.stopPropagation(); // prevent redirect to product page
+    // Toggle wishlist
+    wishlistBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent card click
         if(wishlist.includes(p.id)){
-            wishlist = wishlist.filter(id=>id!==p.id);
+            wishlist = wishlist.filter(id => id !== p.id);
             wishlistBtn.classList.remove("active");
         } else {
             wishlist.push(p.id);
@@ -80,7 +83,7 @@ products.forEach(p=>{
     });
 
     // Redirect to product page on card click
-    card.addEventListener("click", ()=>{
+    card.addEventListener("click", () => {
         localStorage.setItem("selectedProduct", p.id);
         redirect("product.html");
     });
