@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,10 +28,21 @@ font-weight:bold;
 cursor:pointer;
 }
 
+.nav-icons{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
 .nav-icons span{
-margin-left:20px;
 cursor:pointer;
 font-weight:bold;
+}
+
+.search{
+padding:6px 10px;
+border:none;
+border-radius:6px;
 }
 
 main{
@@ -76,6 +88,8 @@ Hansi Store
 
 <div class="nav-icons">
 
+<input type="text" id="search" class="search" placeholder="Search product..." onkeyup="searchProduct()">
+
 <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
 <span onclick="redirect('cart.html')">🛒 Cart</span>
 <span onclick="redirect('orders.html')">📦 My Orders</span>
@@ -112,7 +126,6 @@ const products=[
 // WISHLIST STORAGE
 let allWishlists = JSON.parse(localStorage.getItem("wishlist") || "{}");
 
-// first time user wishlist create
 if(!allWishlists[loggedInUser.username]){
 allWishlists[loggedInUser.username]=[];
 localStorage.setItem("wishlist",JSON.stringify(allWishlists));
@@ -124,7 +137,11 @@ localStorage.setItem("wishlist",JSON.stringify(allWishlists));
 
 const container=document.getElementById("productsContainer");
 
-products.forEach(p=>{
+function loadProducts(list){
+
+container.innerHTML="";
+
+list.forEach(p=>{
 
 const card=document.createElement("div");
 card.className="product-card";
@@ -144,7 +161,6 @@ card.innerHTML=`
 
 const heart=card.querySelector(".wishlist-btn");
 
-// HEART CLICK
 heart.onclick=(e)=>{
 
 e.stopPropagation();
@@ -167,7 +183,6 @@ saveWishlist();
 
 };
 
-// OPEN PRODUCT PAGE
 card.onclick=()=>{
 localStorage.setItem("selectedProduct",p.id);
 redirect("product.html");
@@ -177,10 +192,25 @@ container.appendChild(card);
 
 });
 
+}
+
+// SEARCH FUNCTION
+function searchProduct(){
+
+let input=document.getElementById("search").value.toLowerCase();
+
+let filtered=products.filter(p=>p.name.toLowerCase().includes(input));
+
+loadProducts(filtered);
+
+}
+
+// FIRST LOAD
+loadProducts(products);
+
 </script>
 
 </body>
 </html>
-
 
 
