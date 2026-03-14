@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,9 +84,14 @@ function addToCart(id){
 
 // ===== Buy Now =====
 function buyNow(id){
-    // Save product for checkout
-    localStorage.setItem("selectedProduct", id);
-    redirect("checkout.html");
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const exist = cart.find(item=>item.id===id);
+    if(exist){ exist.quantity += 1; }
+    else{ cart.push({id, quantity:1}); }
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Redirect to cart page
+    redirect("cart.html");
 }
 </script>
 
