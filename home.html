@@ -109,11 +109,13 @@ const products=[
 {id:4,name:"Product D",price:999,description:"This is Product D"}
 ];
 
-// WISHLIST
+// WISHLIST STORAGE
 let allWishlists = JSON.parse(localStorage.getItem("wishlist") || "{}");
 
+// first time user wishlist create
 if(!allWishlists[loggedInUser.username]){
 allWishlists[loggedInUser.username]=[];
+localStorage.setItem("wishlist",JSON.stringify(allWishlists));
 }
 
 function saveWishlist(){
@@ -142,6 +144,7 @@ card.innerHTML=`
 
 const heart=card.querySelector(".wishlist-btn");
 
+// HEART CLICK
 heart.onclick=(e)=>{
 
 e.stopPropagation();
@@ -164,6 +167,7 @@ saveWishlist();
 
 };
 
+// OPEN PRODUCT PAGE
 card.onclick=()=>{
 localStorage.setItem("selectedProduct",p.id);
 redirect("product.html");
