@@ -10,8 +10,10 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:26px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;max-width:800px;margin:auto;}
-.order-item{background:white;padding:15px;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.order-item{background:white;padding:15px;margin-bottom:15px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
 .order-item span{display:block;margin:5px 0;}
+.order-item strong{color:violet;}
+.total-order{font-weight:bold;margin-top:10px;color:green;}
 </style>
 </head>
 <body>
@@ -36,7 +38,7 @@ main{padding:20px;max-width:800px;margin:auto;}
 function redirect(page){ window.location.href = page; }
 
 // ===== Logged-in Check =====
-const loggedInUser = localStorage.getItem("loggedInUser");
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!loggedInUser){ 
     alert("Please login first."); 
     redirect("index.html"); 
@@ -50,17 +52,24 @@ const products = [
     {id:4,name:"Product D",price:999}
 ];
 
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+// ===== Load Orders =====
+let allOrders = JSON.parse(localStorage.getItem("orders") || "[]");
 const container = document.getElementById("ordersContainer");
 
 function loadOrders(){
     container.innerHTML = "";
-    if(orders.length===0){
+    // Filter orders of logged-in user
+    const userOrders = allOrders.filter(o => o.user === loggedInUser.username);
+    
+    if(userOrders.length === 0){
         container.innerHTML = "<p>No orders yet!</p>";
         return;
     }
-    orders.forEach((item,i)=>{
-        const product = products.find(p=>p.id===item.id);
+
+    userOrders.forEach((item,i)=>{
+        const product = products.find(p => p.id === item.id);
+        const totalPrice = product.price * item.quantity;
+
         const div = document.createElement("div");
         div.className = "order-item";
         div.innerHTML = `
@@ -68,7 +77,7 @@ function loadOrders(){
             <span>Product: ${product.name}</span>
             <span>Quantity: ${item.quantity}</span>
             <span>Price per unit: ₹${product.price}</span>
-            <span>Total: ₹${product.price*item.quantity}</span>
+            <span>Total: ₹${totalPrice}</span>
             <span>Ordered on: ${item.date}</span>
         `;
         container.appendChild(div);
