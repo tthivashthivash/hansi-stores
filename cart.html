@@ -111,7 +111,9 @@ function checkout(){
         alert("Cart is empty!"); 
         return; 
     }
+    // Save cart items for checkout page
     localStorage.setItem("checkoutCart", JSON.stringify(cart));
+    // Redirect to checkout page
     redirect("checkout.html");
 }
 
