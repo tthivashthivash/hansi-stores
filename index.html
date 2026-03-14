@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,9 +60,9 @@ button:hover {
 
 <div class="container">
     <h2 id="formTitle">Login</h2>
-    <input type="text" id="mobile" placeholder="Mobile Number" style="display:none;">
+    <input type="text" id="mobile" placeholder="Mobile Number">
     <input type="text" id="username" placeholder="Username">
-    <input type="email" id="email" placeholder="Email" style="display:none;">
+    <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button id="submitBtn">Login</button>
     <div class="toggle" id="toggleForm">Don't have an account? Signup</div>
@@ -84,6 +83,10 @@ const mobileInput = document.getElementById("mobile");
 const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
+
+// Default: hide mobile & email for login
+mobileInput.style.display = "none";
+emailInput.style.display = "none";
 
 toggleForm.addEventListener("click", ()=>{
     isLogin = !isLogin;
@@ -112,17 +115,17 @@ submitBtn.addEventListener("click", ()=>{
     let users = JSON.parse(localStorage.getItem("users") || "[]");
 
     if(isLogin){
-        if(username === "" || password === ""){
-            alert("Enter both username and password!");
+        if(username === "" || password === "" || mobile === "" || email === ""){
+            alert("Enter all fields to login!");
             return;
         }
-        const user = users.find(u=>u.username===username && u.password===password);
+        const user = users.find(u=>u.username===username && u.password===password && u.mobile===mobile && u.email===email);
         if(user){
             localStorage.setItem("loggedInUser", username);
             alert("Login Successful!");
             redirect("home.html");
         }else{
-            alert("Invalid username or password!");
+            alert("Invalid credentials!");
         }
     }else{
         // Signup
@@ -143,8 +146,8 @@ submitBtn.addEventListener("click", ()=>{
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
-        mobileInput.style.display="none";
-        emailInput.style.display="none";
+        mobileInput.style.display = "none";
+        emailInput.style.display = "none";
         mobileInput.value="";
         emailInput.value="";
         usernameInput.value="";
