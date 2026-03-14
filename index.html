@@ -84,17 +84,28 @@ const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 
+// ===== Toggle Display for Email (optional) =====
+function updateForm(){
+    if(isLogin){
+        formTitle.innerText = "Login";
+        submitBtn.innerText = "Login";
+        toggleForm.innerText = "Don't have an account? Signup";
+        // For login, email can be optional if you want
+        mobileInput.style.display = "block";
+        emailInput.style.display = "block";
+    }else{
+        formTitle.innerText = "Signup";
+        submitBtn.innerText = "Signup";
+        toggleForm.innerText = "Already have an account? Login";
+        mobileInput.style.display = "block";
+        emailInput.style.display = "block";
+    }
+}
+updateForm();
+
 toggleForm.addEventListener("click", ()=>{
     isLogin = !isLogin;
-    if(isLogin){
-        formTitle.innerText="Login";
-        submitBtn.innerText="Login";
-        toggleForm.innerText="Don't have an account? Signup";
-    }else{
-        formTitle.innerText="Signup";
-        submitBtn.innerText="Signup";
-        toggleForm.innerText="Already have an account? Login";
-    }
+    updateForm();
 });
 
 // ===== Submit Login / Signup =====
@@ -104,28 +115,30 @@ submitBtn.addEventListener("click", ()=>{
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
+    if(mobile === "" || username === "" || email === "" || password === ""){
+        alert("All fields are required!");
+        return;
+    }
+
     let users = JSON.parse(localStorage.getItem("users") || "[]");
 
     if(isLogin){
         // LOGIN
-        if(mobile==="" || username === "" || email==="" || password === ""){
-            alert("Enter all fields to login!");
-            return;
-        }
-        const user = users.find(u=>u.username===username && u.password===password && u.email===email && u.mobile===mobile);
+        const user = users.find(u => 
+            u.username === username && 
+            u.password === password && 
+            u.email === email && 
+            u.mobile === mobile
+        );
         if(user){
             localStorage.setItem("loggedInUser", JSON.stringify(user)); // full user save
-            alert("Login Successful!");
-            redirect("home.html"); // ✅ redirect to home instead of profile
+            alert("Login Successful! Redirecting to Home...");
+            setTimeout(()=>{ redirect("home.html"); }, 100);
         }else{
             alert("Invalid credentials! Check all fields.");
         }
     }else{
         // SIGNUP
-        if(mobile==="" || username==="" || email==="" || password===""){
-            alert("All fields are required!");
-            return;
-        }
         if(!isValidMobile(mobile)){
             alert("Enter a valid 10-digit mobile number!");
             return;
@@ -134,18 +147,17 @@ submitBtn.addEventListener("click", ()=>{
             alert("Enter a valid email!");
             return;
         }
-        const exist = users.find(u=>u.username===username || u.email===email || u.mobile===mobile);
+        const exist = users.find(u => u.username === username || u.email === email || u.mobile === mobile);
         if(exist){
             alert("User with same username, email, or mobile already exists!");
             return;
         }
-        // Save user
         const newUser = {mobile, username, email, password};
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("loggedInUser", JSON.stringify(newUser)); // auto login
+        localStorage.setItem("loggedInUser", JSON.stringify(newUser));
         alert("Signup Successful! Redirecting to Home...");
-        setTimeout(()=>{ redirect("home.html"); }, 100); // ✅ redirect to home
+        setTimeout(()=>{ redirect("home.html"); }, 100);
     }
 });
 </script>
