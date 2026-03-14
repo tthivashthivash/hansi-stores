@@ -10,11 +10,13 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:26px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
-.product-card{background:white;border-radius:15px;padding:15px;width:200px;box-shadow:0 3px 6px rgba(0,0,0,0.1);cursor:pointer;transition:0.3s;}
+.product-card{background:white;border-radius:15px;padding:15px;width:200px;box-shadow:0 3px 6px rgba(0,0,0,0.1);cursor:pointer;transition:0.3s;position:relative;}
 .product-card:hover{transform:translateY(-5px);}
 .product-card h3{margin:10px 0;}
 .product-card p{margin:5px 0;color:gray;}
 .product-card span{font-weight:bold;color:violet;}
+.wishlist-btn{position:absolute;top:10px;right:10px;font-size:20px;color:gray;cursor:pointer;transition:0.3s;}
+.wishlist-btn.active{color:red;}
 </style>
 </head>
 <body>
@@ -48,18 +50,41 @@ const products = [
 // ===== Load Product Cards =====
 const container = document.getElementById("productsContainer");
 
+// Load existing wishlist
+let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+
+function saveWishlist(){ localStorage.setItem("wishlist", JSON.stringify(wishlist)); }
+
 products.forEach(p=>{
     const card = document.createElement("div");
     card.className = "product-card";
     card.innerHTML = `
+        <div class="wishlist-btn ${wishlist.includes(p.id) ? 'active':''}">❤️</div>
         <h3>${p.name}</h3>
         <p>Price: ₹<span>${p.price}</span></p>
         <p>${p.description.substring(0,30)}...</p>
     `;
+    const wishlistBtn = card.querySelector(".wishlist-btn");
+
+    // Wishlist toggle
+    wishlistBtn.addEventListener("click", (e)=>{
+        e.stopPropagation(); // prevent redirect to product page
+        if(wishlist.includes(p.id)){
+            wishlist = wishlist.filter(id=>id!==p.id);
+            wishlistBtn.classList.remove("active");
+        } else {
+            wishlist.push(p.id);
+            wishlistBtn.classList.add("active");
+        }
+        saveWishlist();
+    });
+
+    // Redirect to product page on card click
     card.addEventListener("click", ()=>{
         localStorage.setItem("selectedProduct", p.id);
         redirect("product.html");
     });
+
     container.appendChild(card);
 });
 </script>
