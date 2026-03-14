@@ -60,9 +60,9 @@ button:hover {
 
 <div class="container">
     <h2 id="formTitle">Login</h2>
-    <input type="text" id="mobile" placeholder="Mobile Number" style="display:none;">
+    <input type="text" id="mobile" placeholder="Mobile Number">
     <input type="text" id="username" placeholder="Username">
-    <input type="email" id="email" placeholder="Email" style="display:none;">
+    <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button id="submitBtn">Login</button>
     <div class="toggle" id="toggleForm">Don't have an account? Signup</div>
@@ -92,8 +92,8 @@ toggleForm.addEventListener("click", ()=>{
         formTitle.innerText="Login";
         submitBtn.innerText="Login";
         toggleForm.innerText="Don't have an account? Signup";
-        mobileInput.style.display="none";
-        emailInput.style.display="none";
+        mobileInput.style.display="block";
+        emailInput.style.display="block";
     }else{
         formTitle.innerText="Signup";
         submitBtn.innerText="Signup";
@@ -114,17 +114,17 @@ submitBtn.addEventListener("click", ()=>{
 
     if(isLogin){
         // LOGIN
-        if(username === "" || password === ""){
-            alert("Enter username and password to login!");
+        if(mobile==="" || username === "" || email==="" || password === ""){
+            alert("Enter all fields to login!");
             return;
         }
-        const user = users.find(u=>u.username===username && u.password===password);
+        const user = users.find(u=>u.username===username && u.password===password && u.email===email && u.mobile===mobile);
         if(user){
             localStorage.setItem("loggedInUser", JSON.stringify(user)); // full user save
             alert("Login Successful!");
             redirect("profile.html");
         }else{
-            alert("Invalid credentials!");
+            alert("Invalid credentials! Check mobile, email, username, or password.");
         }
     }else{
         // SIGNUP
@@ -140,9 +140,9 @@ submitBtn.addEventListener("click", ()=>{
             alert("Enter a valid email!");
             return;
         }
-        const exist = users.find(u=>u.username===username);
+        const exist = users.find(u=>u.username===username || u.email===email || u.mobile===mobile);
         if(exist){
-            alert("Username already exists!");
+            alert("User with same username, email, or mobile already exists!");
             return;
         }
         // Save user
