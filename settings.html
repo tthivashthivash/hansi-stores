@@ -10,11 +10,11 @@ header.navbar{display:flex;justify-content:space-between;align-items:center;padd
 header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
 header .nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
 main{padding:20px;}
-.settings-card{max-width:500px;margin:40px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+.settings-card{max-width:500px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
 .settings-card h2{margin-bottom:20px;color:#333;}
-.settings-card p{margin-bottom:15px;font-size:16px;color:#555;}
+.settings-card p{margin-bottom:10px;font-size:16px;color:#555;}
 .settings-card label{display:block;margin:10px 0;font-weight:bold;}
-.settings-card select, .settings-card input{padding:8px 12px;border-radius:10px;border:1px solid #ccc;width:100%;margin-bottom:15px;}
+.settings-card input, .settings-card select{padding:8px 12px;border-radius:10px;border:1px solid #ccc;width:100%;margin-bottom:15px;}
 .settings-card button{
     padding:10px 15px;
     border:none;
@@ -26,7 +26,7 @@ main{padding:20px;}
     margin-right:10px;
 }
 .settings-card button:hover{opacity:0.8;}
-.settings-card .secondary-btn{background:skyblue;}
+.settings-card .secondary-btn{background:skyblue;color:white;}
 hr{border:none;border-top:1px solid #eee;margin:20px 0;}
 </style>
 </head>
@@ -46,7 +46,24 @@ hr{border:none;border-top:1px solid #eee;margin:20px 0;}
     <div class="settings-card">
         <h2>Settings</h2>
 
-        <p><strong>Logged in as:</strong> <span id="userName"></span></p>
+        <p><strong>Name:</strong> <span id="userName"></span></p>
+        <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <p><strong>Mobile:</strong> <span id="userMobile"></span></p>
+        <p><strong>Address:</strong> <span id="userAddress"></span></p>
+
+        <hr>
+
+        <!-- Change Mobile Number -->
+        <label for="mobileInput">Change Mobile Number</label>
+        <input type="text" id="mobileInput" placeholder="Enter new mobile number">
+        <button onclick="changeMobile()">Update Mobile</button>
+
+        <!-- Change Address -->
+        <label for="addressInput">Change Address</label>
+        <input type="text" id="addressInput" placeholder="Enter new address">
+        <button onclick="changeAddress()">Update Address</button>
+
+        <hr>
 
         <!-- Language Selection -->
         <label for="language">Language</label>
@@ -56,31 +73,59 @@ hr{border:none;border-top:1px solid #eee;margin:20px 0;}
             <option value="hi">Hindi</option>
         </select>
 
-        <!-- Buttons -->
+        <hr>
+
+        <!-- Quick Buttons -->
         <button class="secondary-btn" onclick="redirect('wishlist.html')">View Wishlist</button>
         <button class="secondary-btn" onclick="redirect('contact.html')">Contact Support</button>
 
         <hr>
 
-        <!-- Logout Button -->
+        <!-- Logout -->
         <button onclick="confirmLogout()">Logout</button>
     </div>
 </main>
 
 <script>
-// ===== Redirect Function =====
+// ===== Redirect =====
 function redirect(page){ window.location.href = page; }
 
-// ===== Logged-in Check =====
-const loggedInUser = localStorage.getItem("loggedInUser");
+// ===== Load Logged-in User =====
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!loggedInUser){
     alert("Please login first.");
     redirect("index.html");
-}else{
-    document.getElementById("userName").innerText = loggedInUser;
 }
 
-// ===== Logout Function =====
+// Display user info
+document.getElementById("userName").innerText = loggedInUser.name || "N/A";
+document.getElementById("userEmail").innerText = loggedInUser.email || "N/A";
+document.getElementById("userMobile").innerText = loggedInUser.mobile || "N/A";
+document.getElementById("userAddress").innerText = loggedInUser.address || "N/A";
+
+// ===== Update Mobile =====
+function changeMobile(){
+    const mobile = document.getElementById("mobileInput").value.trim();
+    if(mobile===""){ alert("Enter a valid mobile number!"); return; }
+    loggedInUser.mobile = mobile;
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    document.getElementById("userMobile").innerText = mobile;
+    alert("Mobile number updated!");
+    document.getElementById("mobileInput").value = "";
+}
+
+// ===== Update Address =====
+function changeAddress(){
+    const address = document.getElementById("addressInput").value.trim();
+    if(address===""){ alert("Enter a valid address!"); return; }
+    loggedInUser.address = address;
+    localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    document.getElementById("userAddress").innerText = address;
+    alert("Address updated!");
+    document.getElementById("addressInput").value = "";
+}
+
+// ===== Logout =====
 function confirmLogout(){
     if(confirm("Are you sure you want to logout?")){
         localStorage.removeItem("loggedInUser");
@@ -91,9 +136,7 @@ function confirmLogout(){
 
 // ===== Language Selection =====
 const langSelect = document.getElementById("language");
-// Load saved language
 langSelect.value = localStorage.getItem("userLanguage") || "en";
-// Save selection
 langSelect.addEventListener("change", ()=>{
     localStorage.setItem("userLanguage", langSelect.value);
     alert("Language changed to " + langSelect.options[langSelect.selectedIndex].text);
