@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMeesho Home</title>
+<style>
+/* ====== General Styles ====== */
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+}
+header.navbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding:15px 30px;
+    background: linear-gradient(135deg, violet, skyblue);
+    color:white;
+}
+header .logo{
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+header .nav-icons span{
+    margin-left:20px;
+    cursor: pointer;
+}
+header .search-bar{
+    padding:5px 10px;
+    border-radius:5px;
+    border:none;
+}
+main.home-main{
+    text-align:center;
+    margin-top:100px;
+}
+main.home-main button{
+    padding:10px 20px;
+    border:none;
+    border-radius:5px;
+    background: violet;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+footer{
+    text-align:center;
+    padding:20px;
+    background:#f1f1f1;
+}
+footer span{
+    cursor:pointer;
+    color:blue;
+    text-decoration: underline;
+    margin:0 5px;
+}
+
+/* ====== Hover Effects ====== */
+header .nav-icons span:hover,
+footer span:hover,
+main.home-main button:hover{
+    opacity:0.8;
+}
+</style>
+</head>
+<body>
+
+<!-- Header / Navbar -->
+<header class="navbar">
+    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="home-main">
+    <h1>Welcome to MiniMeesho!</h1>
+    <p>Click below to explore our products</p>
+    <button onclick="redirect('products.html')">View Products</button>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>MiniMeesho © 2026 | 
+        <span onclick="redirect('about.html')">About</span> | 
+        <span onclick="redirect('contact.html')">Contact</span> | 
+        <span onclick="redirect('terms.html')">Terms</span>
+    </p>
+</footer>
+
+<script>
+// ====== Redirect Function ======
+function redirect(page){
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

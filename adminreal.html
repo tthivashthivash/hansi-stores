@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMeesho Admin Panel</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;}
+header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
+footer{background:#f1f1f1;text-align:center;padding:20px;}
+footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
+footer span:hover, header .nav-icons span:hover{opacity:0.8;}
+
+/* ====== Admin Styles ====== */
+main{padding:20px;max-width:900px;margin:auto;}
+section{margin-bottom:30px;}
+h2{text-align:center;margin-bottom:15px;}
+table{width:100%;border-collapse:collapse;}
+th,td{border:1px solid #ccc;padding:8px;text-align:left;}
+th{background:violet;color:white;}
+tr:nth-child(even){background:#f9f9f9;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="navbar">
+    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <input type="text" placeholder="Search..." class="search-bar">
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main>
+    <h1 style="text-align:center;">Admin Panel</h1>
+    
+    <section>
+        <h2>All Users</h2>
+        <table id="usersTable">
+            <tr><th>Username</th></tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>All Orders</h2>
+        <table id="ordersTable">
+            <tr>
+                <th>Username</th>
+                <th>Order #</th>
+                <th>Products</th>
+                <th>Total Price</th>
+                <th>Date/Time</th>
+            </tr>
+        </table>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>MiniMeesho © 2026 | 
+        <span onclick="redirect('about.html')">About</span> | 
+        <span onclick="redirect('contact.html')">Contact</span> | 
+        <span onclick="redirect('terms.html')">Terms</span>
+    </p>
+</footer>
+
+<script>
+// ====== Redirect ======
+function redirect(page){
+    window.location.href = page;
+}
+
+// ====== Fetch Users ======
+const users = JSON.parse(localStorage.getItem("users") || "[]");
+const usersTable = document.getElementById("usersTable");
+users.forEach(u=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${u.username}</td>`;
+    usersTable.appendChild(tr);
+});
+
+// ====== Fetch Orders ======
+const allOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+const products = [
+    {id:1,name:"Product A",price:499},
+    {id:2,name:"Product B",price:799},
+    {id:3,name:"Product C",price:299},
+    {id:4,name:"Product D",price:999},
+];
+const ordersTable = document.getElementById("ordersTable");
+allOrders.forEach((order,index)=>{
+    let productList = order.items.map(i=>{
+        const p = products.find(prod=>prod.id===i.id);
+        return `${p.name} x${i.quantity}`;
+    }).join(", ");
+    let total = order.items.reduce((sum,i)=>{
+        const p = products.find(prod=>prod.id===i.id);
+        return sum + p.price*i.quantity;
+    },0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${order.username}</td>
+                    <td>${index+1}</td>
+                    <td>${productList}</td>
+                    <td>₹${total}</td>
+                    <td>${order.date}</td>`;
+    ordersTable.appendChild(tr);
+});
+</script>
+
+</body>
+</html>

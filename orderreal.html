@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMeesho Orders</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;}
+header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
+footer{background:#f1f1f1;text-align:center;padding:20px;}
+footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
+footer span:hover, header .nav-icons span:hover{opacity:0.8;}
+
+/* ====== Orders Styles ====== */
+main{padding:20px;max-width:800px;margin:auto;}
+.orders-container{display:flex;flex-direction:column;gap:15px;}
+.order-item{border:1px solid #ccc;border-radius:10px;padding:10px;}
+.order-item h3{margin:0 0 5px 0;}
+.order-item p{margin:3px 0;font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="navbar">
+    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main>
+    <h1 style="text-align:center;">Your Orders</h1>
+    <div class="orders-container" id="ordersContainer">
+        <!-- Orders will load here -->
+    </div>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>MiniMeesho © 2026 | 
+        <span onclick="redirect('about.html')">About</span> | 
+        <span onclick="redirect('contact.html')">Contact</span> | 
+        <span onclick="redirect('terms.html')">Terms</span>
+    </p>
+</footer>
+
+<script>
+// ====== Redirect ======
+function redirect(page){
+    window.location.href = page;
+}
+
+// ====== Dummy Products Data ======
+const products = [
+    {id:1,name:"Product A",price:499},
+    {id:2,name:"Product B",price:799},
+    {id:3,name:"Product C",price:299},
+    {id:4,name:"Product D",price:999},
+];
+
+// ====== Simulate Logged-in User ======
+const loggedInUser = localStorage.getItem("loggedInUser");
+if(!loggedInUser){
+    alert("Please login to view orders.");
+    redirect("index.html");
+}
+
+// ====== Simulate Orders in LocalStorage ======
+if(!localStorage.getItem("orders")){
+    // Add some dummy orders for testing
+    localStorage.setItem("orders", JSON.stringify([
+        {username:"testuser",items:[{id:1,quantity:1},{id:2,quantity:2}],date: new Date().toLocaleString()},
+        {username:"testuser",items:[{id:3,quantity:1}],date: new Date().toLocaleString()}
+    ]));
+}
+
+// ====== Render Orders ======
+function renderOrders(){
+    const allOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const userOrders = allOrders.filter(o => o.username === loggedInUser);
+    const container = document.getElementById("ordersContainer");
+    container.innerHTML = "";
+    if(userOrders.length===0){
+        container.innerHTML="<p>You have not placed any orders yet.</p>";
+        return;
+    }
+
+    userOrders.forEach((order,index)=>{
+        let orderHTML = `<div class="order-item"><h3>Order #${index+1} - ${order.date}</h3>`;
+        let total = 0;
+        order.items.forEach(i=>{
+            const product = products.find(p=>p.id===i.id);
+            const subTotal = product.price * i.quantity;
+            total += subTotal;
+            orderHTML += `<p>${product.name} | Qty: ${i.quantity} | ₹${subTotal}</p>`;
+        });
+        orderHTML += `<p><strong>Total: ₹${total}</strong></p></div>`;
+        container.innerHTML += orderHTML;
+    });
+}
+
+// ====== Initialize ======
+renderOrders();
+</script>
+
+</body>
+</html>

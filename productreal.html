@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMeesho Products</title>
+<style>
+/* ====== General Styles ====== */
+body{margin:0;font-family:Arial,sans-serif;}
+header.navbar{display:flex;justify-content: space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;}
+header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
+footer{background:#f1f1f1;text-align:center;padding:20px;}
+footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
+footer span:hover, header .nav-icons span:hover{opacity:0.8;}
+
+/* ====== Product Cards ====== */
+main{padding:20px;}
+.products-container{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
+.product-card{border:1px solid #ccc;border-radius:10px;width:200px;text-align:center;padding:10px;transition:0.3s;cursor:pointer;}
+.product-card:hover{box-shadow:0 4px 10px rgba(0,0,0,0.2);}
+.product-card img{width:100%;border-radius:10px;}
+.product-card button{padding:8px 12px;margin:5px;border:none;border-radius:5px;background:violet;color:white;cursor:pointer;transition:0.3s;}
+.product-card button:hover{opacity:0.8;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="navbar">
+    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main>
+    <h1 style="text-align:center;">Our Products</h1>
+    <div class="products-container" id="productsContainer">
+        <!-- Products will be dynamically added here -->
+    </div>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>MiniMeesho © 2026 | 
+        <span onclick="redirect('about.html')">About</span> | 
+        <span onclick="redirect('contact.html')">Contact</span> | 
+        <span onclick="redirect('terms.html')">Terms</span>
+    </p>
+</footer>
+
+<script>
+// ====== Redirect Function ======
+function redirect(page){
+    window.location.href = page;
+}
+
+// ====== Dummy Products Data ======
+const products = [
+    {id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200x200?text=A",description:"This is Product A"},
+    {id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200x200?text=B",description:"This is Product B"},
+    {id:3,name:"Product C",price:299,image:"https://via.placeholder.com/200x200?text=C",description:"This is Product C"},
+    {id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200x200?text=D",description:"This is Product D"},
+];
+
+// ====== Render Products ======
+const container = document.getElementById("productsContainer");
+products.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+        <img src="${p.image}" alt="${p.name}" onclick="viewProduct(${p.id})">
+        <h3>${p.name}</h3>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart(${p.id})">Add to Cart</button>
+        <button onclick="buyNow(${p.id})">Buy Now</button>
+    `;
+    container.appendChild(card);
+});
+
+// ====== Product Actions ======
+function viewProduct(id){
+    redirect(`product.html?id=${id}`);
+}
+
+function addToCart(id){
+    alert("Product "+id+" added to cart!");
+    // Later: Save to LocalStorage
+}
+
+function buyNow(id){
+    alert("Buying Product "+id+" now!");
+    // Later: Redirect to checkout or place order
+}
+</script>
+</body>
+</html>
