@@ -1,155 +1,94 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Orders</title>
-
+<title>Hansi Store Orders</title>
 <style>
-
-body{
-margin:0;
-font-family:Poppins,sans-serif;
-background:#f8f8f8;
-}
-
-header.navbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 30px;
-background:linear-gradient(135deg,violet,skyblue);
-color:white;
-}
-
-.logo{
-font-size:26px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.nav-icons span{
-margin-left:20px;
-cursor:pointer;
-font-weight:bold;
-}
-
-main{
-padding:20px;
-max-width:900px;
-margin:auto;
-}
-
-.order-item{
-background:white;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-box-shadow:0 3px 6px rgba(0,0,0,0.1);
-}
-
-.order-item h3{
-margin:0;
-}
-
-.order-item p{
-margin:5px 0;
-}
-
+body{margin:0;font-family:Poppins,sans-serif;background:#f8f8f8;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+.logo{font-size:26px;font-weight:bold;cursor:pointer;}
+.nav-icons span{margin-left:20px;cursor:pointer;font-weight:bold;}
+main{padding:20px;max-width:900px;margin:auto;}
+.order-item{display:flex;justify-content:space-between;align-items:center;background:white;padding:15px;margin-bottom:15px;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+.order-item img{width:80px;border-radius:10px;}
+.order-item div{margin-left:10px;}
+.order-item h3{margin:0;}
+.order-item p{margin:5px 0;}
+#totalAmount{font-size:20px;font-weight:bold;text-align:right;margin-top:20px;}
 </style>
 </head>
-
 <body>
 
 <header class="navbar">
-
-<div class="logo" onclick="redirect('home.html')">
-Hansi Store
-</div>
-
+<div class="logo" onclick="redirect('home.html')">Hansi Store</div>
 <div class="nav-icons">
-
-<span onclick="redirect('home.html')">🏠 Home</span>
 <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
 <span onclick="redirect('cart.html')">🛒 Cart</span>
 <span onclick="redirect('orders.html')">📦 My Orders</span>
 <span onclick="redirect('profile.html')">👤 Profile</span>
-
 </div>
-
 </header>
 
 <main>
-
-<h2>My Orders</h2>
-
+<h1>My Orders</h1>
 <div id="ordersContainer"></div>
-
+<div id="totalAmount"></div>
 </main>
 
 <script>
+function redirect(page){ window.location.href=page; }
 
-function redirect(page){
-window.location.href=page;
-}
+// ===== LOGIN CHECK =====
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!loggedInUser){ alert("Please login first"); redirect("index.html"); }
+let username = loggedInUser.username;
 
-// same product database
+// ===== PRODUCTS =====
 const products=[
-{id:1,name:"Product A",price:499},
-{id:2,name:"Product B",price:799},
-{id:3,name:"Product C",price:299},
-{id:4,name:"Product D",price:999}
+{id:1,name:"Product A",price:499,image:"https://via.placeholder.com/200?text=A"},
+{id:2,name:"Product B",price:799,image:"https://via.placeholder.com/200?text=B"},
+{id:3,name:"Product C",price:299,image:"https://via.placeholder.com/200?text=C"},
+{id:4,name:"Product D",price:999,image:"https://via.placeholder.com/200?text=D"}
 ];
 
-let orders=JSON.parse(localStorage.getItem("orders") || "[]");
-
-const container=document.getElementById("ordersContainer");
+// ===== LOAD ORDERS =====
+let allOrders = JSON.parse(localStorage.getItem("orders") || "{}");
+let userOrders = allOrders[username] || [];
 
 function renderOrders(){
+    const container = document.getElementById("ordersContainer");
+    container.innerHTML="";
+    if(userOrders.length===0){ container.innerHTML="<p>No orders yet!</p>"; document.getElementById("totalAmount").innerText=""; return; }
 
-container.innerHTML="";
+    let total = 0;
+    userOrders.forEach(item=>{
+        const product = products.find(p=>p.id===item.id);
+        if(!product) return;
 
-if(orders.length===0){
-container.innerHTML="<h3>No orders yet</h3>";
-return;
-}
+        const div = document.createElement("div");
+        div.className="order-item";
+        div.innerHTML=`
+            <img src="${product.image}">
+            <div>
+                <h3>${product.name}</h3>
+                <p>Price: ₹${product.price}</p>
+                <p>Quantity: ${item.quantity}</p>
+            </div>
+            <div>
+                <p>Subtotal: ₹${product.price * item.quantity}</p>
+            </div>
+        `;
+        container.appendChild(div);
+        total += product.price * item.quantity;
+    });
 
-orders.forEach(item=>{
-
-let product=products.find(p=>p.id===item.id);
-
-if(!product) return;
-
-let price=product.price*item.quantity;
-
-let div=document.createElement("div");
-
-div.className="order-item";
-
-div.innerHTML=`
-
-<h3>${product.name}</h3>
-
-<p>Quantity: ${item.quantity}</p>
-
-<p>Total Price: ₹${price}</p>
-
-<p>Status: Order Placed ✅</p>
-
-`;
-
-container.appendChild(div);
-
-});
-
+    document.getElementById("totalAmount").innerText = `Total Amount: ₹${total}`;
 }
 
 renderOrders();
-
 </script>
 
 </body>
 </html>
-```
 
