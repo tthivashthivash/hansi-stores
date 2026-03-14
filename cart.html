@@ -43,10 +43,12 @@ main{padding:20px;max-width:800px;margin:auto;}
 function redirect(page){ window.location.href = page; }
 
 // ===== Logged-in Check =====
-const loggedInUser = localStorage.getItem("loggedInUser");
-if(!loggedInUser){ 
-    alert("Please login first."); 
-    redirect("index.html"); 
+let loggedInUser = localStorage.getItem("loggedInUser");
+if(!loggedInUser){
+    alert("Please login first.");
+    redirect("index.html");
+} else {
+    try{ loggedInUser = JSON.parse(loggedInUser).username || loggedInUser; } catch(e){}
 }
 
 // ===== Dummy Products =====
@@ -57,10 +59,17 @@ const products = [
     {id:4,name:"Product D",price:999}
 ];
 
-// ===== Load Cart =====
-let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+// ===== Load Cart for Logged-in User =====
+let allCarts = JSON.parse(localStorage.getItem("cart") || "{}");
+let cart = allCarts[loggedInUser] || [];
+
 const container = document.getElementById("cartContainer");
 const totalDiv = document.getElementById("totalAmount");
+
+function saveCart(){
+    allCarts[loggedInUser] = cart;
+    localStorage.setItem("cart", JSON.stringify(allCarts));
+}
 
 function loadCart(){
     container.innerHTML = "";
@@ -90,34 +99,34 @@ function loadCart(){
     totalDiv.innerHTML = `Total: ₹${total}`;
 }
 
+// ===== Cart Actions =====
 function changeQty(id, delta){
     const index = cart.findIndex(item=>item.id===id);
     if(index>=0){
         cart[index].quantity += delta;
         if(cart[index].quantity <= 0) cart.splice(index,1);
-        localStorage.setItem("cart", JSON.stringify(cart));
+        saveCart();
         loadCart();
     }
 }
 
 function removeItem(id){
     cart = cart.filter(item=>item.id!==id);
-    localStorage.setItem("cart", JSON.stringify(cart));
+    saveCart();
     loadCart();
 }
 
 function checkout(){
-    if(cart.length===0){ 
-        alert("Cart is empty!"); 
-        return; 
+    if(cart.length===0){
+        alert("Cart is empty!");
+        return;
     }
-    // Save cart items for checkout page
+    // Save cart for checkout page
     localStorage.setItem("checkoutCart", JSON.stringify(cart));
-    // Redirect to checkout page
     redirect("checkout.html");
 }
 
-// Initial load
+// ===== Initial Load =====
 loadCart();
 </script>
 
