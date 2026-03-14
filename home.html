@@ -96,7 +96,7 @@ Hansi Store
 
 <div class="nav-icons">
 
-<input type="text" id="searchBox" placeholder="Search product..." onkeyup="searchProduct()">
+<input type="text" id="searchBox" placeholder="Search products..." onkeyup="searchProduct()">
 
 <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
 <span onclick="redirect('cart.html')">🛒 Cart</span>
@@ -123,36 +123,12 @@ alert("Please login first");
 redirect("index.html");
 }
 
-// PRODUCTS WITH IMAGES
+// PRODUCTS
 const products=[
-{
-id:1,
-name:"Product A",
-price:499,
-description:"This is Product A",
-image:"https://via.placeholder.com/200?text=Product+A"
-},
-{
-id:2,
-name:"Product B",
-price:799,
-description:"This is Product B",
-image:"https://via.placeholder.com/200?text=Product+B"
-},
-{
-id:3,
-name:"Product C",
-price:299,
-description:"This is Product C",
-image:"https://via.placeholder.com/200?text=Product+C"
-},
-{
-id:4,
-name:"Product D",
-price:999,
-description:"This is Product D",
-image:"https://via.placeholder.com/200?text=Product+D"
-}
+{id:1,name:"Product A",price:499,description:"Nice product",image:"https://via.placeholder.com/200?text=A"},
+{id:2,name:"Product B",price:799,description:"Best quality",image:"https://via.placeholder.com/200?text=B"},
+{id:3,name:"Product C",price:299,description:"Low price",image:"https://via.placeholder.com/200?text=C"},
+{id:4,name:"Product D",price:999,description:"Premium product",image:"https://via.placeholder.com/200?text=D"}
 ];
 
 // WISHLIST STORAGE
@@ -184,6 +160,7 @@ card.innerHTML=`
 <h3>${p.name}</h3>
 
 <p>Price: ₹${p.price}</p>
+
 <p>${p.description}</p>
 
 `;
@@ -223,7 +200,7 @@ container.appendChild(card);
 
 });
 
-// SEARCH SYSTEM
+// SEARCH FUNCTION
 function searchProduct(){
 
 let input=document.getElementById("searchBox").value.toLowerCase();
@@ -243,28 +220,13 @@ card.style.display="none";
 });
 
 }
-  // ===== SEARCH FUNCTION =====
-const searchInput = document.querySelector(".search-bar");
-
-searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase();
-    const cards = document.querySelectorAll(".product-card");
-
-    cards.forEach(card => {
-        const name = card.querySelector("h3").innerText.toLowerCase();
-        if(name.includes(query)){
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
-    });
-});
 
 </script>
 
 </body>
 </html>
 ```
+
 
 
 
